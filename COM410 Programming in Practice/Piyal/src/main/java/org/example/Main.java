@@ -1,3 +1,4 @@
+package org.example;
 
 
 public class Main {
@@ -23,4 +24,4 @@ public class Main {
     }
 }
 
-        
+

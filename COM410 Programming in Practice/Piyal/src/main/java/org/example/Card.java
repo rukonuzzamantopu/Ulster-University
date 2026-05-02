@@ -1,4 +1,4 @@
-
+package org.example;
 
 import java.util.Objects;
 
@@ -70,4 +70,5 @@ public class Card {
     @Override
     public int hashCode() { return Objects.hash(RankVal, SuitVal); }
 }
+
 

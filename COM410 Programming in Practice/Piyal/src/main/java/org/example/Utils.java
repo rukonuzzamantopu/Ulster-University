@@ -1,3 +1,5 @@
+package org.example;
+
 public class Utils {
     public static int SafeParseInt(String s, int def) {
         if (s == null) return def;
