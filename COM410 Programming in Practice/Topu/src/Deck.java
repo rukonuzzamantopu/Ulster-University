@@ -1,30 +1,33 @@
-
+package org.example;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Deck {
-    private final List<Card> Cards = new ArrayList<>();
+    private final List<Card> cards = new ArrayList<>();
 
     public Deck() {
-        for (Card.Suit S : Card.Suit.values()) {
-            for (Card.Rank R : Card.Rank.values()) {
-                Cards.add(new Card(R, S));
+        for (Card.Suit s : Card.Suit.values()) {
+            for (Card.Rank r : Card.Rank.values()) {
+                cards.add(new Card(r, s));
             }
         }
     }
 
-    public void Shuffle() { Collections.shuffle(Cards); }
+    public void shuffle() { Collections.shuffle(cards); }
 
-    public boolean IsEmpty() { return Cards.isEmpty(); }
+    public boolean isEmpty() { return cards.isEmpty(); }
 
-    public int Size() { return Cards.size(); }
+    public int size() { return cards.size(); }
 
-    public Card DrawTop() { if (Cards.isEmpty()) return null; return Cards.remove(0); }
+    public Card drawTop() {
+        if (cards.isEmpty()) return null;
+        return cards.remove(0);
+    }
 
-    public void ReturnToBottom(Card C) { if (C != null) Cards.add(C); }
+    public void returnToBottom(Card c) { if (c != null) cards.add(c); }
 
-    public void ReturnManyToBottom(List<Card> ListCards) { if (ListCards != null) Cards.addAll(ListCards); }
+    public void returnManyToBottom(List<Card> list) { if (list != null) cards.addAll(list); }
 }
 
