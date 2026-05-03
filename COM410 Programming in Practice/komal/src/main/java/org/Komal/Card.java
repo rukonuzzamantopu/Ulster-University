@@ -1,4 +1,4 @@
-package org.example;
+package org.Komal;
 
 import java.util.Objects;
 
@@ -56,3 +56,4 @@ public class Card {
         return Objects.hash(RANK, SUIT);
     }
 }
+
