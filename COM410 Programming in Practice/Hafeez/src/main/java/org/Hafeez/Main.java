@@ -1,3 +1,5 @@
+package org.Hafeez;
+
 import java.util.*;
 
 /**
@@ -8,3 +10,4 @@ public class Main {
         new Game().run();
     }
 }
+
