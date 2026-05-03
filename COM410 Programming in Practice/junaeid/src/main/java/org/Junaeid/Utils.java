@@ -1,4 +1,4 @@
-package org.example;
+package org.Junaeid;
 
 public class Utils {
     public static int safeParseInt(String s, int defaultVal) {
@@ -8,4 +8,3 @@ public class Utils {
         try { return Integer.parseInt(s); } catch (Exception e) { return defaultVal; }
     }
 }
-

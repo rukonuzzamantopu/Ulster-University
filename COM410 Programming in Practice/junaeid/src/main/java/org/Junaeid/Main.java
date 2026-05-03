@@ -1,4 +1,4 @@
-package org.example;
+package org.Junaeid;
 
 import java.util.*;
 
@@ -324,33 +324,33 @@ public class Main {
 
             System.out.println("  " + player.getName() + " -> longest consecutive run: " + length);
         }
-        
+
         // Decide threshold for awarding bonuses (require at least length 3)
         final int BONUS_THRESHOLD = 3;
 
         if (bestSequenceLength < BONUS_THRESHOLD) {
             System.out.println("\n  No sequence bonuses awarded (no sequence length >= " + BONUS_THRESHOLD + ").");
-            return;
-        }
+        } else {
 
-        // Find players who achieved the best sequence length
-        List<Player> bonusWinners = new ArrayList<>();
+            // Find players who achieved the best sequence length
+            List<Player> bonusWinners = new ArrayList<>();
 
-        for (Map.Entry<Player, Integer> entry : sequenceMap.entrySet()) {
-            if (entry.getValue() == bestSequenceLength) {
-                bonusWinners.add(entry.getKey());
+            for (Map.Entry<Player, Integer> entry : sequenceMap.entrySet()) {
+                if (entry.getValue() == bestSequenceLength) {
+                    bonusWinners.add(entry.getKey());
+                }
             }
-        }
 
-        // Award bonus points equal to the sequence length to each winner
-        for (Player winner : bonusWinners) {
-            winner.addBonusPoints(2); // smaller bonus for this variant
-        }
+            // Award bonus points equal to the sequence length to each winner
+            for (Player winner : bonusWinners) {
+                winner.addBonusPoints(2); // smaller bonus for this variant
+            }
 
-        if (bonusWinners.size() > 1) {
-            System.out.print("\n  ** Sequence bonus tied between:");
-            for (Player p : bonusWinners) System.out.print(" " + p.getName());
-            System.out.println("  (+2 each) **\n");
+            if (bonusWinners.size() > 1) {
+                System.out.print("\n  ** Sequence bonus tied between:");
+                for (Player p : bonusWinners) System.out.print(" " + p.getName());
+                System.out.println("  (+2 each) **\n");
+            }
         }
 
         // Additionally, simple suit-count bonus: give +5 to player with most same-suit cards
@@ -376,9 +376,20 @@ public class Main {
         }
 
         if (!suitWinners.isEmpty()) {
-            Player winner = suitWinners.get(0);
-            winner.addBonusPoints(5);
-            System.out.println("\n  *** " + winner.getName() + " wins the Suit bonus! +5 pts ***\n");
+            if (suitWinners.size() == 1) {
+                Player winner = suitWinners.get(0);
+                winner.addBonusPoints(5);
+                System.out.println("\n  *** " + winner.getName() + " wins the Suit bonus! +5 pts ***\n");
+            } else {
+                System.out.print("\n  ** Suit bonus tied between:");
+
+                for (Player p : suitWinners) {
+                    p.addBonusPoints(2);
+                    System.out.print(" " + p.getName());
+                }
+
+                System.out.println("  (+2 each) **\n");
+            }
         }
     }
 
@@ -440,7 +451,7 @@ public class Main {
         }
 
         if (winners.size() == 1) {
-            System.out.println("\nCongratulations " + winners.get(0).getName() + ", you achieved " + topScore + " points");
+            System.out.println("\nCongratulations " + winners.get(0).getName() + " you win this game and achieved " + topScore + " points");
         } else {
             System.out.print("\nTie between:");
             for (Player p : winners) System.out.print(" " + p.getName());
