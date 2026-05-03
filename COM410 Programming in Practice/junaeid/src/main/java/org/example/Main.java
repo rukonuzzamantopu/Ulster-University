@@ -21,7 +21,12 @@ public class Main {
     }
 
     private void startGame() {
-        System.out.println("High Card Series");
+        System.out.println("==================================================");
+        System.out.println("        HIGH CARD SERIES  --  Console Game       ");
+        System.out.println("==================================================");
+        System.out.println("  How are you??? I am Junaeid!");
+        System.out.println("  Welcome to my card game. Let us have fun!");
+        System.out.println("==================================================\n");
         setupPlayers();
         setupRounds();
         deck.shuffle();
@@ -50,6 +55,7 @@ public class Main {
             }
 
             players.add(new Player(playerName));
+            System.out.println("  Nice! Welcome to the game, " + playerName + "!");
         }
     }
 
@@ -68,9 +74,8 @@ public class Main {
     private void executeRounds() {
         for (int currentRound = 1; currentRound <= totalRounds; currentRound++) {
 
-            System.out.println("\n-----------------------");
-            System.out.println("Round " + currentRound);
-            System.out.println("-----------------------");
+            System.out.println("\n========== Round " + currentRound + " of " + totalRounds + " ==========");
+            System.out.println("  Junaeid is dealing the cards...");
 
             Map<Player, Card> dealtCardsMap = new LinkedHashMap<>();
 
@@ -79,8 +84,7 @@ public class Main {
                 Card drawnCard = deck.drawTop();
                 dealtCardsMap.put(currentPlayer, drawnCard);
 
-                System.out.println(currentPlayer.getName() +
-                        " receives: " + (drawnCard != null ? drawnCard : "[no card]"));
+                System.out.println("  -> " + currentPlayer.getName() + " receives: " + (drawnCard != null ? drawnCard : "[no card]"));
             }
 
             // Find highest card value
@@ -114,8 +118,8 @@ public class Main {
                 winner.addCollected(winningCard);
                 winner.addRoundPoints(3);
 
-                System.out.println("Winner: " + winner.getName() +
-                        " (+3) keeps " + winningCard);
+                System.out.println();
+                System.out.println("  *** Round winner: " + winner.getName() + " (+3 points) -- keeps " + winningCard + " ***\n");
 
                 for (Map.Entry<Player, Card> entry : dealtCardsMap.entrySet()) {
                     if (!entry.getKey().equals(winner)) {
@@ -124,7 +128,7 @@ public class Main {
                 }
             }
             else {
-                System.out.print("Tie between:");
+                System.out.print("  Tie between:");
 
                 for (Player tiedPlayer : roundWinners) {
                     Card card = dealtCardsMap.get(tiedPlayer);
@@ -145,35 +149,38 @@ public class Main {
             }
 
             // Display scores
-            System.out.println("Scores after round " + currentRound + ":");
+            System.out.println("\n  -- Scoreboard after round " + currentRound + " --");
 
             for (Player player : players) {
-                System.out.println(player.getName() + ": " + player.getRoundPoints());
+                System.out.println("     " + player.getName() + ": " + player.getRoundPoints() + " pts");
             }
 
-            System.out.print("Press Enter to continue...");
+            System.out.print("\nPress Enter to go to the next round...");
             scanner.nextLine();
         }
     }
 
     private void displayPlayerCollections() {
-        System.out.println("\n--- Collections and Round Scores ---");
+        System.out.println("\n==================================================");
+        System.out.println("        Collections and Round Scores            ");
+        System.out.println("==================================================\n");
 
         for (Player player : players) {
-            System.out.println(player.getName() +
-                    " - Round points: " + player.getRoundPoints());
-
-            System.out.println("Collected cards:");
+            System.out.println("  Player : " + player.getName());
+            System.out.println("  Points : " + player.getRoundPoints());
+            System.out.println("  Cards  :");
 
             List<Card> collectedCards = player.getCollected();
 
             if (collectedCards.isEmpty()) {
-                System.out.println("(none)");
+                System.out.println("    (none)");
             } else {
                 for (int index = 0; index < collectedCards.size(); index++) {
-                    System.out.println((index + 1) + ": " + collectedCards.get(index));
+                    System.out.println("    " + (index + 1) + ". " + collectedCards.get(index));
                 }
             }
+
+            System.out.println();
         }
     }
 
@@ -190,19 +197,31 @@ public class Main {
     }
 
     private void performAdjustmentPhase() {
-        System.out.println("\n--- Optional Adjustment Stage ---");
+        System.out.println("\n==================================================");
+        System.out.println("          Optional Adjustment Stage             ");
+        System.out.println("==================================================\n");
+
+        System.out.println("  Junaeid allows each player one chance to swap cards!\n");
 
         for (Player player : players) {
 
-            System.out.println("Player: " + player.getName());
+            System.out.println("  -- " + player.getName() + " --");
 
-            if (player.getCollected().isEmpty()) {
-                System.out.println("No collected cards to adjust.");
+            List<Card> collectedCards = player.getCollected();
+
+            System.out.println("  Your current cards:");
+
+            if (collectedCards.isEmpty()) {
+                System.out.println("(none)");
                 continue;
             }
 
+            for (int index = 0; index < collectedCards.size(); index++) {
+                System.out.println("    " + (index + 1) + ". " + collectedCards.get(index));
+            }
+
             if (player.hasUsedAdjustment()) {
-                System.out.println("Adjustment already used.");
+                System.out.println("  Adjustment already used.");
                 continue;
             }
 
@@ -210,21 +229,20 @@ public class Main {
 
             if (player.isComputer()) {
 
-                int maxDiscard = Math.min(2, player.getCollected().size());
+                int maxDiscard = Math.min(2, collectedCards.size());
                 discardCount = new Random().nextInt(maxDiscard + 1);
 
                 System.out.println("Computer discards " + discardCount + " card(s).");
-            }
-            else {
+            } else {
                 System.out.print("Do you want to replace cards? (yes/no): ");
                 String response = scanner.nextLine().trim().toLowerCase();
 
                 if (!response.isEmpty() && response.charAt(0) == 'y') {
 
-                    int maxDiscard = Math.min(2, player.getCollected().size());
+                    int maxDiscard = Math.min(2, collectedCards.size());
 
                     do {
-                        System.out.print("How many cards to replace (1-" + maxDiscard + "): ");
+                        System.out.print("How many cards to replace? (1-" + maxDiscard + "): ");
                         String input = scanner.nextLine().trim();
 
                         try {
@@ -236,7 +254,7 @@ public class Main {
                     } while (discardCount < 1 || discardCount > maxDiscard);
 
                 } else {
-                    System.out.println("No adjustment made.");
+                    System.out.println("  Good call -- keeping your hand as it is!");
                 }
             }
 
@@ -246,7 +264,6 @@ public class Main {
 
             if (player.isComputer()) {
 
-                List<Card> collectedCards = player.getCollected();
                 Collections.shuffle(collectedCards);
 
                 for (int i = 0; i < discardCount; i++) {
@@ -258,9 +275,10 @@ public class Main {
                 for (int i = 0; i < discardCount; i++) {
 
                     int selectedIndex;
+                    int remaining = discardCount - i;
 
                     do {
-                        System.out.print("Select card index to discard: ");
+                        System.out.print("Pick card number to discard (" + remaining + " left): ");
                         String input = scanner.nextLine().trim();
 
                         try {
@@ -269,8 +287,7 @@ public class Main {
                             selectedIndex = -1;
                         }
 
-                    } while (selectedIndex < 1 ||
-                            selectedIndex > player.getCollected().size());
+                    } while (selectedIndex < 1 || selectedIndex > player.getCollected().size());
 
                     removedCards.add(player.getCollected().remove(selectedIndex - 1));
                 }
@@ -285,14 +302,16 @@ public class Main {
 
             player.setUsedAdjustment(true);
 
-            System.out.println("After adjustment: " +
-                    formatCardList(player.getCollected()));
+            System.out.println("  Hand after adjustment: " + formatCardList(player.getCollected()) + "\n");
         }
     }
 
     private void computeBonuses() {
+        System.out.println("\n==================================================");
+        System.out.println("              Calculating Bonuses                ");
+        System.out.println("==================================================\n");
 
-        System.out.println("\n--- Calculating Bonuses ---");
+        System.out.println("  Junaeid is checking your card collections...\n");
 
         int bestSequenceLength = 0;
         Map<Player, Integer> sequenceMap = new HashMap<>();
@@ -303,8 +322,63 @@ public class Main {
             sequenceMap.put(player, length);
             bestSequenceLength = Math.max(bestSequenceLength, length);
 
-            System.out.println(player.getName() +
-                    " longest sequence: " + length);
+            System.out.println("  " + player.getName() + " -> longest consecutive run: " + length);
+        }
+        
+        // Decide threshold for awarding bonuses (require at least length 3)
+        final int BONUS_THRESHOLD = 3;
+
+        if (bestSequenceLength < BONUS_THRESHOLD) {
+            System.out.println("\n  No sequence bonuses awarded (no sequence length >= " + BONUS_THRESHOLD + ").");
+            return;
+        }
+
+        // Find players who achieved the best sequence length
+        List<Player> bonusWinners = new ArrayList<>();
+
+        for (Map.Entry<Player, Integer> entry : sequenceMap.entrySet()) {
+            if (entry.getValue() == bestSequenceLength) {
+                bonusWinners.add(entry.getKey());
+            }
+        }
+
+        // Award bonus points equal to the sequence length to each winner
+        for (Player winner : bonusWinners) {
+            winner.addBonusPoints(2); // smaller bonus for this variant
+        }
+
+        if (bonusWinners.size() > 1) {
+            System.out.print("\n  ** Sequence bonus tied between:");
+            for (Player p : bonusWinners) System.out.print(" " + p.getName());
+            System.out.println("  (+2 each) **\n");
+        }
+
+        // Additionally, simple suit-count bonus: give +5 to player with most same-suit cards
+        Map<Player, Integer> suitBest = new HashMap<>();
+
+        for (Player player : players) {
+            Map<String, Integer> suitCount = new HashMap<>();
+            for (Card c : player.getCollected()) {
+                suitCount.merge(c.getSuit().toString(), 1, Integer::sum);
+            }
+
+            int best = suitCount.values().stream().max(Integer::compareTo).orElse(0);
+            suitBest.put(player, best);
+        }
+
+        // find top suit count
+        int topSuit = suitBest.values().stream().max(Integer::compareTo).orElse(0);
+        List<Player> suitWinners = new ArrayList<>();
+        for (Map.Entry<Player, Integer> e : suitBest.entrySet()) if (e.getValue() == topSuit) suitWinners.add(e.getKey());
+
+        for (Player p : players) {
+            System.out.println("\n  " + p.getName() + " -> best suit count: " + suitBest.getOrDefault(p, 0));
+        }
+
+        if (!suitWinners.isEmpty()) {
+            Player winner = suitWinners.get(0);
+            winner.addBonusPoints(5);
+            System.out.println("\n  *** " + winner.getName() + " wins the Suit bonus! +5 pts ***\n");
         }
     }
 
@@ -338,18 +412,39 @@ public class Main {
     }
 
     private void showFinalResults() {
-
-        System.out.println("\n--- Final Results ---");
+        System.out.println("\n==================================================");
+        System.out.println("                 Final Results                   ");
+        System.out.println("==================================================\n");
 
         players.sort(
                 Comparator.comparingInt(Player::getFinalScore).reversed()
         );
 
+        int rank = 1;
         for (Player player : players) {
-            System.out.println(player.getName() +
-                    " | Round: " + player.getRoundPoints() +
-                    " | Bonus: " + player.getBonusPoints() +
-                    " | Total: " + player.getFinalScore());
+            System.out.println(String.format("  #%d  %s   Round: %d  Bonus: %d  Total: %d", rank++, player.getName(), player.getRoundPoints(), player.getBonusPoints(), player.getFinalScore()));
+        }
+
+        // Determine winner(s)
+        if (players.isEmpty()) {
+            System.out.println("No players to determine a winner.");
+            return;
+        }
+
+        int topScore = players.get(0).getFinalScore();
+        List<Player> winners = new ArrayList<>();
+
+        for (Player p : players) {
+            if (p.getFinalScore() == topScore) winners.add(p);
+            else break;
+        }
+
+        if (winners.size() == 1) {
+            System.out.println("\nCongratulations " + winners.get(0).getName() + ", you achieved " + topScore + " points");
+        } else {
+            System.out.print("\nTie between:");
+            for (Player p : winners) System.out.print(" " + p.getName());
+            System.out.println(" (" + topScore + " points each)");
         }
     }
 }
