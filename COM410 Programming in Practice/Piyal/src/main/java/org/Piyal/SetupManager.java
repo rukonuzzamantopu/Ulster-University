@@ -1,4 +1,4 @@
-package org.example;
+package org.Piyal;
 
 import java.util.Scanner;
 
@@ -6,13 +6,13 @@ public class SetupManager {
     public void SetupPlayers(GameState state) {
         int N = 0;
         do {
-            System.out.print("Enter number of players (2–5): ");
+            System.out.print("  How many players will join? (2 to 5): ");
             String Line = state.Scanner.nextLine().trim();
             try { N = Integer.parseInt(Line); } catch (Exception e) { N = 0; }
         } while (N < 2 || N > 5);
 
         for (int I = 1; I <= N; I++) {
-            System.out.print("Enter name for player " + I + " (enter 'Computer' for a computer-controlled player): ");
+            System.out.print("Enter name for player " + I + " (or unique): ");
             String Name = state.Scanner.nextLine().trim();
             if (Name.isEmpty()) Name = "Player" + I;
             state.Players.add(new Player(Name));
@@ -29,3 +29,4 @@ public class SetupManager {
         state.Rounds = R;
     }
 }
+

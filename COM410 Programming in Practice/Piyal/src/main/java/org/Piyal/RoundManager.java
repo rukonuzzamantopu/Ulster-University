@@ -1,4 +1,4 @@
-package org.example;
+package org.Piyal;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public class RoundManager {
             } else {
                 System.out.println("Highest rank this round: " + formatRankVerbose(bestRank));
 
-                    List<Player> Winners = new ArrayList<>();
+                List<Player> Winners = new ArrayList<>();
                 for (Map.Entry<Player, Card> E : Dealt.entrySet()) {
                     Card C = E.getValue();
                     if (C != null && C.GetRank().GetValue() == Best) Winners.add(E.getKey());
@@ -75,21 +75,11 @@ public class RoundManager {
             if (Round < state.Rounds) {
                 System.out.println();
                 System.out.println("Next: Round " + (Round + 1) + " of " + state.Rounds + ".");
-                System.out.print("Press Enter to play the next round (or type 'cards', 'scores', 'help'): ");
+                System.out.print("Press Enter to play the next round: ");
                 String cmd = state.Scanner.nextLine().trim().toLowerCase();
-                if (cmd.equals("cards")) {
-                    CollectionPrinter cp = new CollectionPrinter();
-                    for (Player p : state.Players) System.out.println(p.GetName() + ": " + cp.FormatCards(p.GetCollected()));
-                    System.out.print("Press Enter to continue..."); state.Scanner.nextLine();
-                } else if (cmd.equals("scores")) {
-                    for (Player p : state.Players) System.out.println(p.GetName() + ": " + p.GetRoundPoints());
-                    System.out.print("Press Enter to continue..."); state.Scanner.nextLine();
-                } else if (cmd.equals("help")) {
-                    System.out.println("Available commands: 'cards' — show collected cards; 'scores' — show current scores; Enter — continue.");
-                    System.out.print("Press Enter to continue..."); state.Scanner.nextLine();
-                }
+              
             } else {
-                System.out.print("\nAll rounds completed.\nPress Enter to continue (or type 'cards', 'scores', 'help'): ");
+                System.out.print("\nAll rounds completed.\nPress Enter to continue: ");
                 String cmd = state.Scanner.nextLine().trim().toLowerCase();
                 if (cmd.equals("cards")) { CollectionPrinter cp = new CollectionPrinter(); for (Player p : state.Players) System.out.println(p.GetName() + ": " + cp.FormatCards(p.GetCollected())); }
                 else if (cmd.equals("scores")) for (Player p : state.Players) System.out.println(p.GetName() + ": " + p.GetRoundPoints());
@@ -110,4 +100,5 @@ public class RoundManager {
         }
     }
 }
+
 

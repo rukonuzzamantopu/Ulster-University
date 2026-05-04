@@ -1,6 +1,4 @@
-package org.example;
-
-
+package org.Piyal;
 import java.util.*;
 
 /**
@@ -59,8 +57,8 @@ public class AdjustmentManager {
                         for (int I = 0; I < Ccol.size(); I++) System.out.println((I+1) + ":" + Ccol.get(I));
                     }
                 } else {
-                        System.out.println("Adjustment skipped.");
-                        ToDiscard = 0;
+                    System.out.println("Adjustment skipped.");
+                    ToDiscard = 0;
                 }
             }
 

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="36226dd1-4720-4046-bbe6-3ed419625376" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Piyal Delivery 1 – High Card Series Application.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/AdjustmentManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BonusManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Card.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CollectionPrinter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Deck.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/GameState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ResultsManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/RoundManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/SetupManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/AdjustmentManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/BonusManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Card$Rank.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Card$Suit.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Card.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/CollectionPrinter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Deck.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/GameState.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Player.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/ResultsManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/RoundManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/SetupManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Utils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/AdjustmentManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/AdjustmentManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/BonusManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/BonusManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/CollectionPrinter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/CollectionPrinter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/ResultsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/ResultsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/RoundManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/RoundManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Topu/SetupManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Topu/SetupManager.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="3DEjtV06iYI50EK93zfoK5Nt0CO" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "onboarding.tips.debug.path": "D:/Ulster-University/COM410 Programming in Practice/Piyal/src/main/java/org/Piyal/Main.java"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="36226dd1-4720-4046-bbe6-3ed419625376" name="Changes" comment="" />
+      <created>1777854342432</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777854342432</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/Piyal/Main.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

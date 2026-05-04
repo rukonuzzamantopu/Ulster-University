@@ -1,5 +1,4 @@
-package org.example;
-
+package org.Piyal;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,9 +13,17 @@ public class Main {
         BonusManager bonus = new BonusManager();
         ResultsManager results = new ResultsManager();
 
-        System.out.println("=== High Card Series ===");
-        System.out.println("Rules: Highest rank wins (Ace high). Suits do not affect round winners.");
+        System.out.println("---------------------------------------------");
+        System.out.println("   HIGH CARD SERIES  >>  by Piyal         ");
+        System.out.println("----------------------------------------------");
+        System.out.println("                                               ");
+        System.out.println("  Hey there! My name is Piyal.                  ");
+        System.out.println("  I built this game just for you!               ");
+        System.out.println("  Ready to play? Let us get started!            ");
+        System.out.println("                                                ");
+        System.out.println("-----------------------------------------------");
         System.out.println();
+        System.out.println("[ Step 1 -- Who is playing? ]");
         setup.SetupPlayers(state);
         setup.SetupRounds(state);
         state.Deck.Shuffle();
@@ -28,5 +35,6 @@ public class Main {
         results.ShowFinalResults(state);
     }
 }
+
 
 
