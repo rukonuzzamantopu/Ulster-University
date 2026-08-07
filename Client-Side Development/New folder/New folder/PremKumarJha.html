@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Golden Leaf | Preview (Chef + Menu)</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome & AOS Animation Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Custom CSS (your uploaded files) -->
+    <link rel="stylesheet" href="SATIRTHA/style.css">
+    <link rel="stylesheet" href="SATIRTHA/responsive.css">
+</head>
+<body>
+
+    <main>
+        <!-- ===== PICTURE 1: Chef Section (from your index.html, Phase 14) ===== -->
+        <section id="chef" class="chef-section">
+            <div class="chef-container">
+                <div class="chef-image" data-aos="fade-right">
+                    <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=600" alt="Executive Chef">
+                </div>
+                <div class="chef-info" data-aos="fade-left">
+                    <h2>Meet Our Executive Chef</h2>
+                    <h3>Alessandro Rossi</h3>
+                    <p>With over 20 years of experience in Michelin-starred restaurants across Europe, Chef Alessandro brings a fusion of traditional techniques and modern innovation to every plate.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Signature_placeholder.png" class="signature" alt="Chef Signature">
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PICTURE 2: Menu Section (from your index.html, Phase 1) ===== -->
+        <section id="menu" class="menu-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Our Culinary Menu</h2>
+                <p>Over 40+ exquisite delicacies</p>
+            </div>
+            <!-- Menu Filters -->
+            <div class="menu-filters" id="menuFilters" data-aos="fade-up">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="starters">Starters</button>
+                <button class="filter-btn" data-filter="mains">Main Course</button>
+                <button class="filter-btn" data-filter="breads">Breads</button>
+                <button class="filter-btn" data-filter="rice">Rice</button>
+                <button class="filter-btn" data-filter="desserts">Desserts</button>
+                <button class="filter-btn" data-filter="drinks">Drinks</button>
+            </div>
+            <!-- Dynamic Grid: menu.js populates this -->
+            <div class="menu-grid" id="menuGrid">
+                <!-- menu.js will populate this -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating "Need Help?" button (visible in both screenshots) -->
+    <a href="https://the-golden-leaf-restaurant.onrender.com/"
+       target="_blank"
+       class="floating-ai-btn"
+       aria-label="AI Receptionist Assistant"
+       style="text-decoration: none;">
+        <div class="ai-avatar">🎧</div>
+        <span class="ai-text">Need Help?</span>
+    </a>
+
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Your own script (unchanged) -->
+    <script src="SATIRTHA/utils.js"></script>
+    <script src="SATIRTHA/storage.js"></script>
+    <script src="SATIRTHA/app.js"></script>
+    <!-- New script for menu functionality -->
+    <script src="Prem Kumar Jha/menu.js"></script>
+</body>
+</html>
