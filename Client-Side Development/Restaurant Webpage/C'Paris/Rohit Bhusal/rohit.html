@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Phase 22: SEO & Meta Tags -->
+    <title>The Golden Leaf | Premium Dining & Reservations</title>
+    <meta name="description" content="Experience the art of dining at The Golden Leaf. Reserve your table online for premium multi-cuisine dishes and luxury ambiance.">
+    <meta name="keywords" content="premium restaurant, fine dining, table reservation, best restaurant, luxury dining">
+    <meta property="og:title" content="The Golden Leaf | Premium Dining">
+    <meta property="og:description" content="Book your table for an unforgettable culinary experience.">
+    <meta property="og:type" content="website">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome & AOS Animation Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Rohit Bhusal/rohit.css">
+    <link rel="stylesheet" href="../Satirtha Dhar/style.css">
+</head>
+<body>
+
+    <!-- Phase 10: AI Receptionist Top Banner (Optional/Mockup) -->
+    <div class="ai-top-banner" role="banner">
+        <p>Need instant help? <button id="btnAiAssist" class="btn-text"> Talk to our AI Receptionist</button></p>
+    </div>
+
+    <!-- Navigation -->
+    <header class="navbar" role="navigation" aria-label="Main Navigation">
+        <div class="logo">
+            <a href="index.html" aria-label="The Golden Leaf Home">THE GOLDEN LEAF</a>
+        </div>
+        <nav class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#menu">Menu</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#reviews">Reviews</a>
+            <a href="#reservation" class="btn-reserve-nav">Reserve Table</a>
+        </nav>
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" aria-label="Toggle Navigation" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <main>
+       
+
+        <!-- Phase 16: Masonry Gallery -->
+        <section id="gallery" class="gallery-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2>The Ambience</h2>
+                <p>A glimpse into perfection</p>
+            </div>
+            <div class="masonry-gallery" id="galleryGrid">
+                <!-- Hardcoded for structural demo, can be dynamic -->
+                <div class="gallery-item large" data-aos="zoom-in"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800" alt="Restaurant Interior"></div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=400" alt="Food Preparation"></div>
+                <div class="gallery-item tall" data-aos="zoom-in" data-aos-delay="200"><img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=400" alt="Luxury Bar"></div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=400" alt="Table Setting"></div>
+            </div>
+        </section>
+
+        <!-- Phase 13: Testimonials (Google Review Style) -->
+        <section id="reviews" class="testimonials-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Guest Experiences</h2>
+                <p>What our patrons say about us</p>
+            </div>
+            <div class="reviews-container">
+                <div class="review-card" data-aos="fade-up">
+                    <div class="reviewer">
+                        <img src="https://ui-avatars.com/api/?name=Sarah+J&background=c5a880&color=fff" alt="Sarah J">
+                        <div>
+                            <h4>Sarah Jenkins</h4>
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                    <p>"Absolutely breathtaking ambiance and the Truffle Parmesan Fries are to die for. Best dining experience in the city!"</p>
+                </div>
+                <div class="review-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="reviewer">
+                        <img src="https://ui-avatars.com/api/?name=Michael+R&background=c5a880&color=fff" alt="Michael R">
+                        <div>
+                            <h4>Michael R.</h4>
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                        </div>
+                    </div>
+                    <p>"Booked this for our anniversary. The AI booking was smooth, and the table setup was immaculate. Highly recommend the Paneer Butter Masala."</p>
+                </div>
+                <div class="review-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="reviewer">
+                        <img src="https://ui-avatars.com/api/?name=Anita+K&background=c5a880&color=fff" alt="Anita K">
+                        <div>
+                            <h4>Anita Kumar</h4>
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                    <p>"The staff is incredibly polite, and the layout of the place screams luxury. Will definitely be returning for my corporate dinners."</p>
+                </div>
+            </div>
+        </section>
+
+
+ <!-- Floating "Need Help?" button (visible in Picture 2) -->
+    <a href="https://the-golden-leaf-restaurant.onrender.com/"
+       target="_blank"
+       class="floating-ai-btn"
+       aria-label="AI Receptionist Assistant"
+       style="text-decoration: none;">
+        <div class="ai-avatar">🎧</div>
+        <span class="ai-text">Need Help?</span>
+    </a>
+
+      <nav class="nav-links">
+            <a href="Prem Kumar Jha/index.html" class="btn-reserve-nav">Reserve Your Table</a>
+        </nav>
+
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Your own scripts (unchanged) -->
+    <script src="../Rohit Bhusal/script.js"></script>
+    <script src="../Prem Kumar Jha/app.js"></script>
+    <script src="../Prem Kumar Jha/menu.js"></script>
+    <script src="../Satirtha Dhar/utils.js"></script>
+    
+</body>
+</html>
