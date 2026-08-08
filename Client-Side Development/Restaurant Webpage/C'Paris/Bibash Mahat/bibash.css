@@ -218,45 +218,7 @@ select option {
     gap: 15px;
 }
 
-/* --- FLOATING AI BUTTON --- */
-.floating-ai-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: var(--primary-gold);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 25px 12px 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    box-shadow: 0 5px 20px rgba(197, 168, 128, 0.4);
-    z-index: 1500;
-    transition: var(--transition-fast);
-    animation: pulseGlow 2s infinite;
-}
 
-.floating-ai-btn:hover {
-    transform: translateY(-5px);
-}
-
-.ai-avatar {
-    background-color: var(--dark-bg);
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.1rem;
-}
-
-.ai-text {
-    color: var(--dark-bg);
-    font-weight: 600;
-    font-size: 0.95rem;
-}
 
 /* --- FOOTER --- */
 .premium-footer {
