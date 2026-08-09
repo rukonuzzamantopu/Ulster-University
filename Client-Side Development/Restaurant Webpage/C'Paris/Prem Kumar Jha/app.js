@@ -14,18 +14,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. Live Table Stats Updates ---
-    const updateLiveStats = () => {
-        const stats = Storage.getLiveStats();
-        
-        const availableEl = document.getElementById('liveAvailable');
-        const bookedEl = document.getElementById('liveBooked');
-        const vipEl = document.getElementById('liveVIP');
+// --- 2. Live Table Stats Updates ---
+const updateLiveStats = () => {
+    if (typeof Storage === 'undefined' || typeof Storage.getLiveStats !== 'function') {
+        return; // no stats source wired up yet — skip safely
+    }
+    const stats = Storage.getLiveStats();
 
-        if (availableEl) availableEl.textContent = stats.available < 10 ? `0${stats.available}` : stats.available;
-        if (bookedEl) bookedEl.textContent = stats.booked < 10 ? `0${stats.booked}` : stats.booked;
-        if (vipEl) vipEl.textContent = stats.vip < 10 ? `0${stats.vip}` : stats.vip;
-    };
+    const availableEl = document.getElementById('liveAvailable');
+    const bookedEl = document.getElementById('liveBooked');
+    const vipEl = document.getElementById('liveVIP');
+
+    if (availableEl) availableEl.textContent = stats.available < 10 ? `0${stats.available}` : stats.available;
+    if (bookedEl) bookedEl.textContent = stats.booked < 10 ? `0${stats.booked}` : stats.booked;
+    if (vipEl) vipEl.textContent = stats.vip < 10 ? `0${stats.vip}` : stats.vip;
+};
+
 
     // Initial load and listen for updates
     updateLiveStats();
