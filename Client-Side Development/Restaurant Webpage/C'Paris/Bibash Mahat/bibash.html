@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
+
     <!-- Phase 22: SEO & Meta Tags -->
-    <title>The Golden Leaf | Premium Dining & Reservations</title>
-    <meta name="description" content="Experience the art of dining at The Golden Leaf. Reserve your table online for premium multi-cuisine dishes and luxury ambiance.">
+    <title>The Golden Leaf |Reservations</title>
+    <link rel="icon" type="image/png" href="../image/5695168.webp">
+
+    <meta name="description"
+        content="Experience the art of dining at The Golden Leaf. Reserve your table online for premium multi-cuisine dishes and luxury ambiance.">
     <meta name="keywords" content="premium restaurant, fine dining, table reservation, best restaurant, luxury dining">
     <meta property="og:title" content="The Golden Leaf | Premium Dining">
     <meta property="og:description" content="Book your table for an unforgettable culinary experience.">
     <meta property="og:type" content="website">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- FontAwesome & AOS Animation Library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Rohit Bhusal/rohit.css">
     <link rel="stylesheet" href="../Satirtha Dhar/style.css">
-    <link rel="stylesheet" href="../Satirtha Dhar/responsive.css">  
-    <link rel="stylesheet" href="../Bibash Mahat/bibash.css"> 
+    <link rel="stylesheet" href="../Satirtha Dhar/responsive.css">
+    <link rel="stylesheet" href="../Bibash Mahat/bibash.css">
 </head>
+
 <body>
 
     <!-- Phase 10: AI Receptionist Top Banner (Optional/Mockup) -->
@@ -37,14 +44,15 @@
     <!-- Navigation -->
     <header class="navbar" role="navigation" aria-label="Main Navigation">
         <div class="logo">
-            <a href="index.html" aria-label="The Golden Leaf Home">THE GOLDEN LEAF</a>
+            <a href="../index.html" aria-label="The Golden Leaf Home">THE GOLDEN LEAF</a>
         </div>
         <nav class="nav-links">
-            <a href="#home" class="active">Home</a>
-            <a href="#about">About</a>
-            <a href="#menu">Menu</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#reviews">Reviews</a>
+
+            <a href="../index.html" class="active">Home</a>
+            <a href="../index.html#about">About</a>
+            <a href="../Prem Kumar Jha/index.html#menu">Menu</a>
+            <a href="../Rohit Bhusal/rohit.html#gallery">Gallery</a>
+            <a href="../Rohit Bhusal/rohit.html#reviews">Reviews</a>
             <a href="#reservation" class="btn-reserve-nav">Reserve Table</a>
         </nav>
         <!-- Mobile Menu Toggle -->
@@ -59,11 +67,13 @@
             <div class="booking-container" data-aos="fade-up">
                 <div class="booking-info">
                     <h2>Reserve Your Table</h2>
-                    <p>Join us for an unforgettable experience. For events larger than 10, please contact our concierge.</p>
+                    <p>Join us for an unforgettable experience. For events larger than 10, please contact our concierge.
+                    </p>
                     <div class="contact-details">
                         <p><i class="fas fa-phone-alt"></i> +447918 765632</p>
                         <p><i class="fas fa-envelope"></i> bibashmahat191@gmail.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Ulster University, Cromore Rd, Coleraine BT52 1SA, United Kingdom</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Ulster University, Cromore Rd, Coleraine BT52 1SA,
+                            United Kingdom</p>
                     </div>
                 </div>
                 <div class="booking-form-wrapper">
@@ -78,7 +88,7 @@
                                 <input type="tel" id="phone" required placeholder="+44 7918 765632">
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="email">Email Address *</label>
@@ -121,15 +131,19 @@
                         <div class="form-group">
                             <label>Special Requests</label>
                             <div class="checkbox-group">
-                                <label><input type="checkbox" value="Wheelchair" class="special-req"> Wheelchair Access</label>
-                                <label><input type="checkbox" value="High Chair" class="special-req"> High Chair (Kids)</label>
-                                <label><input type="checkbox" value="Window Seat" class="special-req"> Window Seat Pref.</label>
+                                <label><input type="checkbox" value="Wheelchair" class="special-req"> Wheelchair
+                                    Access</label>
+                                <label><input type="checkbox" value="High Chair" class="special-req"> High Chair
+                                    (Kids)</label>
+                                <label><input type="checkbox" value="Window Seat" class="special-req"> Window Seat
+                                    Pref.</label>
                             </div>
                         </div>
 
                         <div class="form-group terms-group">
                             <label class="terms-label">
-                                <input type="checkbox" id="agreeTerms" required> I agree to the <a href="#">Terms & Cancellation Policy</a>.
+                                <input type="checkbox" id="agreeTerms" required> I agree to the <a href="#">Terms &
+                                    Cancellation Policy</a>.
                             </label>
                         </div>
 
@@ -152,7 +166,8 @@
                     <p><strong>Occasion:</strong> <span id="receiptOccasion"></span></p>
                 </div>
                 <div class="modal-actions">
-                    <button class="btn-secondary" id="btnDownloadReceipt"><i class="fas fa-download"></i> Download Receipt</button>
+                    <button class="btn-secondary" id="btnDownloadReceipt"><i class="fas fa-download"></i> Download
+                        Receipt</button>
                     <button class="btn-primary" id="btnCloseModal">Back to Home</button>
                 </div>
             </div>
@@ -165,22 +180,27 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="#" class="footer-logo">THE GOLDEN LEAF</a>
-                <p>Elevating the art of dining through exquisite flavors, premium ambiance, and unparalleled service.</p>
+                <p>Elevating the art of dining through exquisite flavors, premium ambiance, and unparalleled service.
+                </p>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/ig_satty/?hl=en" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.facebook.com/I.m.Satty7" aria-label="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://github.com/bibashmahat191-alt" aria-label="GitHub" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.instagram.com/ig_satty/?hl=en" aria-label="Instagram" target="_blank"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/I.m.Satty7" aria-label="Facebook" target="_blank"><i
+                            class="fab fa-facebook-f"></i></a>
+                    <a href="https://github.com/bibashmahat191-alt" aria-label="GitHub" target="_blank"><i
+                            class="fab fa-github"></i></a>
                     <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    
+
                 </div>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#menu">Our Menu</a></li>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../Prem Kumar Jha/index.html#menu">Our Menu</a></li>
                     <li><a href="#reservation">Reservations</a></li>
-                    <li><a href="pages/login.html" target="_blank" class="admin-link">Staff Login <i class="fas fa-lock"></i></a></li>
+                    <li><a href="pages/login.html" target="_blank" class="admin-link">Staff Login <i
+                                class="fas fa-lock"></i></a></li>
                 </ul>
             </div>
             <div class="footer-contact">
@@ -208,20 +228,17 @@
         </div>
     </footer>
 
-   
 
 
- <!-- Floating "Need Help?" button (visible in Picture 2) -->
-    <a href="https://the-golden-leaf-restaurant.onrender.com/"
-       target="_blank"
-       class="floating-ai-btn"
-       aria-label="AI Receptionist Assistant"
-       style="text-decoration: none;">
+
+    <!-- Floating "Need Help?" button (visible in Picture 2) -->
+    <a href="https://the-golden-leaf-restaurant.onrender.com/" target="_blank" class="floating-ai-btn"
+        aria-label="AI Receptionist Assistant" style="text-decoration: none;">
         <div class="ai-avatar">🎧</div>
         <span class="ai-text">Need Help?</span>
     </a>
 
-    
+
 
     <!-- External Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -231,6 +248,7 @@
     <script src="../Prem Kumar Jha/app.js"></script>
     <script src="../Prem Kumar Jha/menu.js"></script>
     <script src="../Satirtha Dhar/utils.js"></script>
-    
+
 </body>
+
 </html>
