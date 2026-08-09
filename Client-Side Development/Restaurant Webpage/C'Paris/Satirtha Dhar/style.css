@@ -295,6 +295,12 @@ a {
     gap: 30px;
 }
 
+.features-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
 .feature-card {
     background-color: var(--dark-bg);
     padding: 40px 30px;
