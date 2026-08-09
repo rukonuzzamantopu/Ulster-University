@@ -79,7 +79,7 @@
     transition: var(--transition-fast);
 }
 
-.filter-btn:hover, 
+.filter-btn:hover,
 .filter-btn.active {
     background-color: var(--primary-gold);
     color: var(--dark-bg);
@@ -91,6 +91,7 @@
     grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
     gap: 30px;
 }
+
 /* Menu items injected by JS */
 .menu-item {
     display: flex;
