@@ -22,9 +22,12 @@
     object-fit: cover;
 }
 
-.chef-info {
-    width: 55%;
-    padding: 50px;
+.chef-info h3 {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    margin-bottom: 20px;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .chef-info h2 {
@@ -35,11 +38,7 @@
     margin-bottom: 10px;
 }
 
-.chef-info h3 {
-    font-family: var(--font-heading);
-    font-size: 3rem;
-    margin-bottom: 20px;
-}
+
 
 .chef-info p {
     color: var(--text-muted);
@@ -89,7 +88,7 @@
 
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
     gap: 30px;
 }
 /* Menu items injected by JS */
