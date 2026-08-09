@@ -1,8 +1,8 @@
 /* --- BOOKING SECTION --- */
 .booking-section {
     padding: 100px 8%;
-    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)), 
-                url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920') no-repeat center center/fixed;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)),
+        url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920') no-repeat center center/fixed;
 }
 
 .booking-container {
@@ -94,7 +94,7 @@ select {
     transition: var(--transition-fast);
 }
 
-input:focus, 
+input:focus,
 select:focus {
     outline: none;
     border-bottom-color: var(--primary-gold);
@@ -349,17 +349,77 @@ select option {
 
 /* --- KEYFRAMES --- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes zoomIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 @keyframes pulseGlow {
-    0% { box-shadow: 0 0 0 0 rgba(197, 168, 128, 0.7); }
-    70% { box-shadow: 0 0 0 15px rgba(197, 168, 128, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(197, 168, 128, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(197, 168, 128, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(197, 168, 128, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(197, 168, 128, 0);
+    }
+}
+
+
+/* --- RESPONSIVE OVERRIDES (mirrors Satirtha's breakpoints, kept here
+   so bibash.css doesn't silently override them due to load order) --- */
+@media screen and (max-width: 992px) {
+    .booking-container {
+        flex-direction: column;
+    }
+
+    .booking-info,
+    .booking-form-wrapper {
+        width: 100%;
+        padding: 40px 30px;
+        border-right: none;
+    }
+
+    .booking-info {
+        border-bottom: 1px solid var(--border-color);
+    }
+}
+
+@media screen and (max-width: 480px) {
+
+    .booking-info,
+    .booking-form-wrapper {
+        padding: 30px 20px;
+    }
+
+    .booking-info h2 {
+        font-size: 2rem;
+    }
+
+    .btn-submit {
+        white-space: normal;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
 }
