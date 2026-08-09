@@ -4,7 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // --- 1. Init AOS Animations ---
     if (typeof AOS !== 'undefined') {
         AOS.init({
@@ -14,22 +14,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-// --- 2. Live Table Stats Updates ---
-const updateLiveStats = () => {
-    if (typeof Storage === 'undefined' || typeof Storage.getLiveStats !== 'function') {
-        return; // no stats source wired up yet — skip safely
-    }
-    const stats = Storage.getLiveStats();
+    // --- 2. Live Table Stats Updates ---
+    const updateLiveStats = () => {
+        if (typeof Storage === 'undefined' || typeof Storage.getLiveStats !== 'function') {
+            return; // no stats source wired up yet — skip safely
+        }
+        const stats = Storage.getLiveStats();
 
-    const availableEl = document.getElementById('liveAvailable');
-    const bookedEl = document.getElementById('liveBooked');
-    const vipEl = document.getElementById('liveVIP');
+        const availableEl = document.getElementById('liveAvailable');
+        const bookedEl = document.getElementById('liveBooked');
+        const vipEl = document.getElementById('liveVIP');
 
-    if (availableEl) availableEl.textContent = stats.available < 10 ? `0${stats.available}` : stats.available;
-    if (bookedEl) bookedEl.textContent = stats.booked < 10 ? `0${stats.booked}` : stats.booked;
-    if (vipEl) vipEl.textContent = stats.vip < 10 ? `0${stats.vip}` : stats.vip;
-};
-
+        if (availableEl) availableEl.textContent = stats.available < 10 ? `0${stats.available}` : stats.available;
+        if (bookedEl) bookedEl.textContent = stats.booked < 10 ? `0${stats.booked}` : stats.booked;
+        if (vipEl) vipEl.textContent = stats.vip < 10 ? `0${stats.vip}` : stats.vip;
+    };
 
     // Initial load and listen for updates
     updateLiveStats();
@@ -85,22 +84,15 @@ const updateLiveStats = () => {
         });
     }
 
-    // --- 5. AI Receptionist Mock Click ---
-    const aiBtns = document.querySelectorAll('#btnAiAssist, .floating-ai-btn');
-    aiBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            alert("AI Receptionist System Initializing... (Future Voiceflow/ElevenLabs Integration here)");
-        });
-    });
 });
 // --- 6. AI RECEPTIONIST INTEGRATION (Secure Fetch) ---
 document.addEventListener('DOMContentLoaded', () => {
     // Ye URL Render.com deploy hone ke baad milega. Abhi local testing ke liye localhost hai.
     // Replace this with your Render URL later (e.g., 'https://ghoomar-ai.onrender.com/chat')
-    const AI_BACKEND_URL = 'http://127.0.0.1:5000/chat'; 
+    const AI_BACKEND_URL = 'http://127.0.0.1:5000/chat';
 
     const aiBtns = document.querySelectorAll('.floating-ai-btn, #btnAiAssist');
-    
+
     // Creating Chat Widget HTML dynamically so you don't clutter your index.html
     const chatWidgetHTML = `
         <div class="chat-container hidden" id="chatContainer">
@@ -123,12 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', chatWidgetHTML);
 
     const chatContainer = document.getElementById('chatContainer');
     const closeChatBtn = document.getElementById('closeChatBtn');
-    
+
     // Open Chat
     aiBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -166,7 +158,7 @@ async function sendAIMessage() {
         });
 
         const data = await response.json();
-        
+
         // Remove typing indicator and show real reply
         document.getElementById(typingId).remove();
         appendAIMessage(data.reply, "bot");
@@ -186,7 +178,7 @@ function appendAIMessage(text, sender) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-window.handleAIKeyPress = function(event) {
+window.handleAIKeyPress = function (event) {
     if (event.key === "Enter") {
         sendAIMessage();
     }
