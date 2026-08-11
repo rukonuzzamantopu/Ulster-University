@@ -140,3 +140,56 @@ document.addEventListener('DOMContentLoaded', () => {
         // If valid, let the event continue on to booking.js which saves + shows the receipt
     });
 });
+
+// -------------------- Cookie helpers --------------------
+function setCookie(name, value, days, options = {}) {
+  const { path = '/', SameSite = 'Lax', secure = (location.protocol === 'https:') } = options;
+  const maxAge = days ? `; Max-Age=${days * 24 * 60 * 60}` : '';
+  const secureAttr = secure ? '; Secure' : '';
+  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}${maxAge}; Path=${path}; SameSite=${SameSite}${secureAttr}`;
+}
+
+function getCookie(name) {
+  const target = encodeURIComponent(name) + '=';
+  const found = document.cookie.split(';').map(c => c.trim()).find(c => c.startsWith(target));
+  return found ? decodeURIComponent(found.slice(target.length)) : null;
+}
+
+function eraseCookie(name, path = '/') {
+  document.cookie = `${encodeURIComponent(name)}=; Path=${path}; Max-Age=0`;
+}
+
+// Banner show/hide
+function showCookieBannerIfNeeded() {
+  const banner = document.getElementById('cookie-banner');
+  if (banner) {
+    banner.classList.add('show'); // সবসময় দেখাও
+  }
+}
+
+
+function bindCookieBannerEvents() {
+  const banner = document.getElementById('cookie-banner');
+  if (!banner) return;
+
+  const acceptBtn = document.getElementById('cookie-accept');
+  const declineBtn = document.getElementById('cookie-decline');
+
+  if (acceptBtn) {
+    acceptBtn.addEventListener('click', () => {
+      // setCookie('cookie_consent', 'accepted', 180);
+      banner.classList.remove('show');
+    });
+  }
+  if (declineBtn) {
+    declineBtn.addEventListener('click', () => {
+      // setCookie('cookie_consent', 'declined', 180);
+      banner.classList.remove('show');
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    bindCookieBannerEvents();
+    showCookieBannerIfNeeded();
+});
