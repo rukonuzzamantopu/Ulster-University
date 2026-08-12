@@ -212,7 +212,7 @@ a {
 .hero-section {
     min-height: 90vh;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), 
-                url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1920') no-repeat center center/cover;
+                url('../image/hero\ image\ 1st\ page.jpg') no-repeat center center/cover;
     display: flex;
     align-items: center;
     padding: 0 8%;

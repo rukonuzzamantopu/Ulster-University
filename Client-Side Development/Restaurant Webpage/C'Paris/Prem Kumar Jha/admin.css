@@ -317,7 +317,7 @@
 /* --- LOGIN PAGE STYLES --- */
 .login-body {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), 
-                url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920') no-repeat center center/cover;
+                url('../image/gallery1.jpg') no-repeat center center/cover;
     height: 100vh;
     display: flex;
     justify-content: center;
