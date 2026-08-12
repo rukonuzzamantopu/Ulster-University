@@ -16,7 +16,139 @@ table(df$acceptability)
 table(df$buying, df$acceptability)
 ```
 ```{r}
+library(ggplot2)
+ggplot(df, aes(x = acceptability)) + geom_bar()
+```
+```{r}
+ggplot(df, aes(x = acceptability, fill = safety)) + geom_bar()
+```
+The bar chart shows that all "vgood" rated cars have high safety, 
+suggesting high safety is required (but not sufficient) for a 
+car to be rated very good.
 
+```{r}
+#install.packages("infotheo")
+```
+```{r}
+library(infotheo)
+m <- mutinformation(df)
+m
+```
+```{r}
+
+```
+Safety and persons show the strongest mutual information with 
+acceptability, while doors shows almost none.
+
+```{r}
+chisq.test(df$buying, df$acceptability)
+chisq.test(df$buying, df$maint)
+```
+Buying price is significantly associated with acceptability (p < 0.001), 
+but not with maintenance cost (p = 0.80), showing the test correctly 
+distinguishes related and unrelated variable pairs.
+
+
+```{r}
+#install.packages("caTools")
+library(caTools)
+set.seed(123)
+split = sample.split(df$acceptability, SplitRatio = 0.8)
+df_train = subset(df, split == TRUE)
+df_test = subset(df, split == FALSE)
+```
+```{r}
+#install.packages("C50")
+#install.packages("caret")
+library(C50)
+library(caret)
+```
+```{r}
+dt_model <- C5.0(df_train[-7], df_train$acceptability)
+```
+```{r}
+dt_pred <- predict(dt_model, df_test)
+```
+```{r}
+confusionMatrix(dt_pred, df_test$acceptability)
+```
+```{r}
+#install.packages("e1071")
+library(e1071)
+```
+```{r}
+set.seed(123)
+nb_model = naiveBayes(df_train[,-7], df_train$acceptability)
+```
+```{r}
+nb_pred = predict(nb_model, df_test)
+confusionMatrix(nb_pred, df_test$acceptability)
+```
+Naive Bayes achieved 85% accuracy, notably lower than the decision 
+tree's 96.5%. This may be because naive Bayes assumes feature 
+independence, while acceptability appears to depend on combinations 
+of features (e.g. safety and persons together).
+
+```{r}
+library(nnet)
+```
+```{r}
+lg_model <- multinom(acceptability ~ ., data = df_train)
+```
+```{r}
+lg_pred <- predict(lg_model, df_test)
+```
+
+```{r}
+confusionMatrix(lg_pred, df_test$acceptability)
+```
+Multinomial logistic regression achieved 93.5% accuracy, second-best 
+so far behind the decision tree.
+
+
+```{r}
+library(e1071)
+svm_model <- svm(acceptability ~ ., data = df_train)
+svm_pred <- predict(svm_model, df_test)
+confusionMatrix(svm_pred, df_test$acceptability)
+```
+SVM achieved 88% accuracy but completely failed to predict "good" or 
+"vgood" classes, always defaulting to "acc" or "unacc" — likely due 
+to class imbalance in the training data.
+
+
+```{r}
+nn_model <- nnet(acceptability ~ ., data = df_train, size = 5)
+nn_pred <- predict(nn_model, df_test, type = "class")
+confusionMatrix(factor(nn_pred), df_test$acceptability)
+```
+Neural network achieved ~92% accuracy, performing reasonably well 
+across all classes, though slightly below the decision tree.
+
+
+```{r}
+library(caret)
+ctrl <- trainControl(method = 'cv', number = 10)
+set.seed(123)
+dt_cv_model <- train(df_train[,-7], df_train[,7], 'C5.0', trControl = ctrl)
+dt_cv_model
+```
+```{r}
+dt_cv_pred <- predict(dt_cv_model, df_test)
+confusionMatrix(dt_cv_pred, df_test$acceptability)
+```
+Applying 10-fold cross-validation with caret improved the decision 
+tree's accuracy from 96.5% to 99%, correctly classifying every 
+"unacc" and "vgood" case in the test set.
+
+
+```{r}
+ctrl <- trainControl(method = 'cv', number = 10)
+set.seed(123)
+nb_cv_model <- train(df_train[,-7], df_train[,7], 'nb', trControl = ctrl)
+nb_cv_model
+nb_cv_pred <- predict(nb_cv_model, df_test)
+confusionMatrix(nb_cv_pred, df_test$acceptability)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
