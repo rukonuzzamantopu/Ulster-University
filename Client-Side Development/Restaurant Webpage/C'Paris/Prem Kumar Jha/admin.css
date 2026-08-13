@@ -378,11 +378,15 @@
     color: var(--primary-gold);
 }
 
+.input-with-icon {
+    margin-bottom: 20px;
+}
+
 .input-with-icon input {
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     border: 1px solid var(--border-color);
-    padding: 15px 15px 15px 45px;
+    padding: 12px 15px 12px 45px;
     color: var(--text-light);
     border-radius: 4px;
 }
@@ -396,7 +400,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: -10px;
+    margin-top: 15px;
     margin-bottom: 30px;
 }
 
@@ -408,6 +412,12 @@
     font-size: 0.85rem;
     text-transform: none;
     margin: 0;
+}
+.remember-me input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--primary-gold);
+    cursor: pointer;
 }
 
 .forgot-password {
