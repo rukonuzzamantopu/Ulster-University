@@ -1,6 +1,6 @@
 ---
 title: "CMP330 Data Analytics - Assessment 2 (Pre-Assignment)"
-author: "MD Ali Hasan Jidan (B01011849)"
+author: "Syed Abdul Hafeez - B01012379"
 output:
   html_notebook: default
   pdf_document: default
