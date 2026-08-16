@@ -1,0 +1,337 @@
+---
+title: "CMP330 Data Analytics - Assessment 2 (Pre-Assignment)"
+author: 
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+# What am I trying to do here?
+
+In this notebook I'm going to predict how "acceptable" a car is 
+(`unacc`, `acc`, `good`, `vgood`) using six features about the car - things 
+like buying price, maintenance cost, number of doors, seats, boot size, and 
+safety rating. I'll try five different ML algorithms and compare them.
+
+---
+
+# Step 1: Getting to know the data
+
+## 1.1 Reading in the dataset
+
+```{r}
+car_records <- read.csv("car.csv")
+car_records <- data.frame(lapply(car_records, factor))
+
+head(car_records)
+str(car_records)
+```
+
+## 1.2 A first look at the numbers
+
+Before I build any models I want to know roughly how the classes are spread 
+out, and whether some obvious features look related to acceptability.
+
+```{r}
+# How many cars in each acceptability bucket?
+table(car_records$acceptability)
+
+# Buying price vs acceptability
+table(car_records$buying, car_records$acceptability)
+
+# I also checked maintenance cost vs acceptability, out of curiosity
+table(car_records$maint, car_records$acceptability)
+
+# And number of doors vs persons - just to see if there's an obvious link
+table(car_records$doors, car_records$persons)
+```
+
+## 1.3 Putting it into pictures
+
+```{r}
+library(ggplot2)
+
+car_records$acceptability <- factor(car_records$acceptability,
+                                     levels = c("unacc", "acc", "good", "vgood"))
+
+# Overall spread of acceptability
+ggplot(car_records, aes(x = acceptability)) +
+  geom_bar(fill = "darkorange") +
+  labs(title = "How acceptable are the cars overall?",
+       x = "Acceptability", y = "Number of cars") +
+  theme_minimal()
+
+# Acceptability split by buying price
+ggplot(car_records, aes(x = acceptability, fill = buying)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Does buying price affect acceptability?",
+       x = "Acceptability", y = "Number of cars") +
+  theme_minimal()
+
+# Extra: acceptability split by number of persons the car seats
+ggplot(car_records, aes(x = acceptability, fill = persons)) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = c("#FF6B6B", "#4ECDC4", "#1A535C")) +
+  labs(title = "Does seating capacity affect acceptability?",
+       x = "Acceptability", y = "Number of cars") +
+  theme_minimal()
+```
+
+## 1.4 Checking how much each feature "tells us" about the others
+
+Regular correlation doesn't work here because everything is categorical, so 
+I used mutual information instead - it tells us how much knowing one 
+variable reduces our uncertainty about another.
+
+```{r}
+library(infotheo)
+
+info_scores <- mutinformation(car_records)
+info_scores
+
+# How informative is each feature about acceptability specifically?
+info_scores[-7, 7]
+```
+
+```{r}
+library(reshape2)
+
+info_long <- melt(info_scores)
+ggplot(info_long, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "#FFF7EC", high = "#7A0177") +
+  labs(title = "Mutual information between all variables", x = "", y = "", fill = "MI score") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 1.5 Testing independence with chi-squared
+
+```{r}
+chisq.test(car_records$buying, car_records$acceptability)
+chisq.test(car_records$buying, car_records$maint)
+
+# Extra check - is boot size independent of acceptability?
+chisq.test(car_records$lug_boot, car_records$acceptability)
+```
+
+## 1.6 Splitting into training and testing data
+
+This part has to stay exactly as given in the brief so results line up 
+across the class.
+
+```{r}
+library(caTools)
+set.seed(123)
+split <- sample.split(car_records$acceptability, SplitRatio = 0.8)
+train_set <- subset(car_records, split == TRUE)
+test_set  <- subset(car_records, split == FALSE)
+
+summary(train_set$acceptability)
+summary(test_set$acceptability)
+prop.table(table(train_set$acceptability))
+prop.table(table(test_set$acceptability))
+```
+
+---
+
+# Step 2a: Trying out different ML algorithms
+
+### Decision tree (C5.0)
+
+```{r}
+library(caret)
+library(C50)
+
+tree_fit  <- C5.0(train_set[-7], train_set$acceptability)
+tree_pred <- predict(tree_fit, test_set)
+confusionMatrix(tree_pred, test_set$acceptability)
+```
+
+### Naive Bayes
+
+```{r}
+library(e1071)
+set.seed(123)
+
+bayes_fit  <- naiveBayes(train_set[, -7], train_set$acceptability)
+bayes_pred <- predict(bayes_fit, test_set)
+confusionMatrix(bayes_pred, test_set$acceptability)
+```
+
+### Multinomial logistic regression
+
+```{r}
+library(nnet)
+
+logit_fit  <- multinom(acceptability ~ ., data = train_set)
+logit_pred <- predict(logit_fit, test_set)
+confusionMatrix(logit_pred, test_set$acceptability)
+```
+
+### Support Vector Machine
+
+```{r}
+library(kernlab)
+
+svm_fit_a  <- ksvm(acceptability ~ ., data = train_set, kernel = "vanilladot")
+svm_pred_a <- predict(svm_fit_a, test_set)
+confusionMatrix(svm_pred_a, test_set$acceptability)
+```
+
+```{r}
+# Trying the e1071 SVM implementation as well, just to compare
+svm_fit_b  <- svm(acceptability ~ ., data = train_set)
+svm_pred_b <- predict(svm_fit_b, test_set)
+confusionMatrix(svm_pred_b, test_set$acceptability)
+```
+
+### Neural network
+
+```{r}
+# Reference: https://www.geeksforgeeks.org/r-language/neural-networks-using-the-r-nnet-package/
+net_fit  <- nnet(acceptability ~ ., data = train_set, size = 5)
+net_pred <- predict(net_fit, test_set, type = "class")
+confusionMatrix(factor(net_pred), test_set$acceptability)
+```
+
+## Now with cross-validation via caret
+
+### Decision tree with CV
+
+```{r}
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+tree_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "C5.0", trControl = cv_ctrl)
+tree_fit_cv
+tree_pred_cv <- predict(tree_fit_cv, test_set)
+confusionMatrix(tree_pred_cv, test_set$acceptability)
+```
+
+### Naive Bayes with CV
+
+```{r}
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+bayes_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "nb", trControl = cv_ctrl)
+bayes_fit_cv
+bayes_pred_cv <- predict(bayes_fit_cv, test_set)
+confusionMatrix(bayes_pred_cv, test_set$acceptability)
+```
+
+### Logistic regression with CV
+
+```{r}
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+logit_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "multinom",
+                        trControl = cv_ctrl, trace = FALSE)
+logit_fit_cv
+logit_pred_cv <- predict(logit_fit_cv, test_set)
+confusionMatrix(logit_pred_cv, test_set$acceptability)
+```
+
+### Neural network with CV
+
+```{r}
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+net_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "nnet",
+                      trControl = cv_ctrl, trace = FALSE)
+net_fit_cv
+net_pred_cv <- predict(net_fit_cv, test_set)
+confusionMatrix(net_pred_cv, test_set$acceptability)
+```
+
+### SVM with CV
+
+```{r}
+set.seed(123)
+svm_fit_cv  <- ksvm(acceptability ~ ., data = train_set, kernel = "vanilladot", cross = 10)
+svm_fit_cv
+svm_pred_cv <- predict(svm_fit_cv, test_set)
+confusionMatrix(svm_pred_cv, test_set$acceptability)
+```
+
+## Picking the best features using mutual information
+
+```{r}
+info_train <- mutinformation(train_set)
+info_train
+info_train[7, -7]
+```
+
+I'm going with the top three features - `persons`, `lug_boot`, `safety` - 
+based on their mutual information scores with the target.
+
+### Decision tree with fewer features
+
+```{r}
+tree_fit_top3  <- C5.0(train_set[, 4:6], train_set$acceptability)
+tree_pred_top3 <- predict(tree_fit_top3, test_set)
+confusionMatrix(tree_pred_top3, test_set$acceptability)
+```
+
+### Naive Bayes with fewer features
+
+```{r}
+bayes_fit_top3  <- naiveBayes(train_set[, 4:6], train_set$acceptability)
+bayes_pred_top3 <- predict(bayes_fit_top3, test_set)
+confusionMatrix(bayes_pred_top3, test_set$acceptability)
+```
+
+### Logistic regression with fewer features
+
+```{r}
+logit_fit_top3  <- multinom(acceptability ~ persons + lug_boot + safety, data = train_set)
+logit_pred_top3 <- predict(logit_fit_top3, test_set)
+confusionMatrix(logit_pred_top3, test_set$acceptability)
+```
+
+---
+
+# Step 2b: Squeezing out more performance
+
+## Tuning the neural network's decay rate
+
+```{r}
+tune_ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+net_grid  <- expand.grid(size = 5, decay = c(0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1))
+set.seed(123)
+
+net_tuned <- train(train_set[, -7], train_set[, 7], method = "nnet",
+                    trControl = tune_ctrl, tuneGrid = net_grid, trace = FALSE)
+plot(net_tuned)
+```
+
+## Tuning the decision tree's number of trials
+
+```{r}
+tune_ctrl  <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+tree_grid  <- expand.grid(model = "tree",
+                           trials = c(1, 5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100),
+                           winnow = FALSE)
+set.seed(123)
+
+tree_tuned <- train(train_set[, -7], train_set[, 7], method = "C5.0",
+                     trControl = tune_ctrl, tuneGrid = tree_grid)
+plot(tree_tuned)
+```
+
+---
+
+# Part 3. Presentation of Specified Results
+
+*(To be finalised in the lab once the exact figures required are confirmed.)*
+
+## References
+
+- Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
+  *Journal of Statistical Software*, 28(5), pp. 1-26.
+- UCI Machine Learning Repository (1997) *Car Evaluation Data Set*. Available 
+  at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
+- Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: Springer-Verlag.
