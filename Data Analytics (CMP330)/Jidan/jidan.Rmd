@@ -68,19 +68,37 @@ ggplot(car_data, aes(x = acceptability)) +
   geom_bar(fill = "steelblue") +
   labs(title = "Distribution of Car Acceptability",
        x = "Acceptability", y = "Count")
+```
+*Figure 1: Most cars in the dataset are rated unacc (693 out of 1000), 
+while only a small number are good or vgood. This shows the classes are 
+quite imbalanced, which is worth keeping in mind later when looking at 
+model accuracy.*
 
+
+```{r}
 # Acceptability broken down by buying price
 ggplot(car_data, aes(x = acceptability, fill = buying)) +
   geom_bar(position = "dodge") +
   labs(title = "Acceptability by Buying Price",
        x = "Acceptability", y = "Count")
+```
+*Figure 2: Cars with a high or vhigh buying price are almost never rated 
+good or vgood - all of those ratings come from cars with low or med buying 
+price. This suggests buying price on its own is a decent predictor of 
+acceptability, though clearly not the only factor.*
 
+```{r}
 # Extra plot: acceptability broken down by safety level
 ggplot(car_data, aes(x = acceptability, fill = safety)) +
   geom_bar(position = "dodge") +
   labs(title = "Acceptability by Safety Level",
        x = "Acceptability", y = "Count")
 ```
+*Figure 3: Cars with low safety are never rated above unacc, and vgood 
+only shows up for cars with high safety. This makes safety look like one 
+of the strongest predictors of acceptability out of all the features, 
+which matches what the mutual information scores show later on.*
+
 
 ## 1.4 Mutual information between variables
 
@@ -213,7 +231,7 @@ nn_pred  <- predict(nn_model, car_test, type = "class")
 confusionMatrix(factor(nn_pred), car_test$acceptability)
 ```
 
-## Using `caret::train()` with cross-validation
+## Using caret::train() with cross-validation
 
 For each algorithm, 10-fold cross-validation is used to tune hyperparameters 
 automatically via the `train()` function from `caret`.
@@ -289,6 +307,42 @@ simplified models.
 mi_train <- mutinformation(car_train)
 mi_train
 mi_train[7, -7]
+```
+### Trying a range of feature-set sizes (x)
+
+Rather than fixing x = 3, the number of top features is varied across 
+x = 2, 3, 4, 5 (ranked by mutual information with the target) and the 
+Decision Tree (C5.0) is retrained each time, so the effect of feature-set 
+size on accuracy can be compared directly.
+
+```{r}
+mi_ranked <- sort(mi_train[7, -7], decreasing = TRUE)
+mi_ranked
+
+x_values <- 2:5
+fs_accuracy <- data.frame(x = x_values, Accuracy = NA)
+
+for (i in seq_along(x_values)) {
+  x <- x_values[i]
+  top_features <- names(mi_ranked)[1:x]
+
+  tree_x_model <- C5.0(car_train[, top_features], car_train$acceptability)
+  tree_x_pred  <- predict(tree_x_model, car_test)
+  acc <- confusionMatrix(tree_x_pred, car_test$acceptability)$overall["Accuracy"]
+
+  fs_accuracy$Accuracy[i] <- acc
+  cat("x =", x, "- features:", paste(top_features, collapse = ", "),
+      "- Accuracy:", round(acc, 4), "\n")
+}
+
+fs_accuracy
+
+ggplot(fs_accuracy, aes(x = x, y = Accuracy)) +
+  geom_line(color = "steelblue") +
+  geom_point(size = 2, color = "steelblue") +
+  scale_x_continuous(breaks = x_values) +
+  labs(title = "Decision Tree accuracy vs. number of top features (x)",
+       x = "Number of top features (x)", y = "Test set accuracy")
 ```
 
 ### Decision Tree with selected features
