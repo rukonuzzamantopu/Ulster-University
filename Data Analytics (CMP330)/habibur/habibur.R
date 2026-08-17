@@ -1,0 +1,300 @@
+# CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
+# Author: Habibur Rahman [B01009639]
+# Converted from habibur.Rmd to plain R script
+
+# What am I trying to do here?
+# In this notebook I'm going to predict how "acceptable" a car is
+# (`unacc`, `acc`, `good`, `vgood`) using six features about the car - things
+# like buying price, maintenance cost, number of doors, seats, boot size, and
+# safety rating. I'll try five different ML algorithms and compare them.
+# Step 1: Getting to know the data
+## 1.1 Reading in the dataset
+car_records <- read.csv("car.csv")
+car_records <- data.frame(lapply(car_records, factor))
+
+head(car_records)
+str(car_records)
+
+# Quick check - any missing values?
+sum(is.na(car_records))
+
+# No missing values in the dataset, so no need to drop or impute anything
+## 1.2 A first look at the numbers
+# Before I build any models I want to know roughly how the classes are spread
+# out, and whether some obvious features look related to acceptability.
+# How many cars in each acceptability bucket?
+table(car_records$acceptability)
+
+# Most cars fall into unacc (693 out of 1000), with good and vgood making up only about 4% and 3.5% each. This is quite imbalanced, so later on I need to be careful — a model could get high accuracy just by guessing unacc every time, so accuracy alone won't tell the full story.
+# Buying price vs acceptability
+table(car_records$buying, car_records$acceptability)
+
+# Cars with low or med buying price have noticeably more good/vgood results, while high and vhigh buying price cars have zero good or vgood cars at all. So price clearly affects how acceptable a car is rated.
+# I also checked maintenance cost vs acceptability, out of curiosity
+table(car_records$maint, car_records$acceptability)
+
+# Same pattern as buying price — vhigh maintenance cost cars never get rated good or vgood, so maintenance cost also seems to matter a lot.
+# And number of doors vs persons - just to see if there's an obvious link
+table(car_records$doors, car_records$persons)
+
+# No real pattern here — doors and persons are set independently in the dataset, which matches what the MI score for these two showed
+## 1.3 Putting it into pictures
+library(ggplot2)
+
+car_records$acceptability <- factor(car_records$acceptability,
+                                     levels = c("unacc", "acc", "good", "vgood"))
+
+# Overall spread of acceptability
+ggplot(car_records, aes(x = acceptability)) +
+  geom_bar(fill = "darkorange") +
+  labs(title = "How acceptable are the cars overall?",
+       x = "Acceptability", y = "Number of cars") +
+  theme_minimal()
+
+# Most cars are unacc, close to 700 of them. acc is the next biggest group. good and vgood are both small and about the same size. So very few cars are actually rated good — not many cars meet all the good criteria at once.
+# Acceptability split by buying price
+ggplot(car_records, aes(x = acceptability, fill = buying)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Does buying price affect acceptability?",
+       x = "Acceptability", y = "Number of cars") +
+  theme_minimal()
+
+# No high or vhigh buying price cars show up in good or vgood at all — only low and med price cars get those ratings. So a car with an expensive buying price basically can't be rated good, no matter what else is true about it. Buying price looks like one of the strongest factors here.
+# Extra: acceptability split by number of persons the car seats
+ggplot(car_records, aes(x = acceptability, fill = persons)) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = c("#FF6B6B", "#4ECDC4", "#1A535C")) +
+  labs(title = "Does seating capacity affect acceptability?",
+       x = "Acceptability", y = "Number of cars") +
+  theme_minimal()
+
+# Cars that seat only 2 people are almost all unacc. None of them get good or vgood. Cars that seat 4 or more can get any rating, including good and vgood. So a 2-seater can't really be a "good" car in this data, no matter what else about it is nice. This makes sense — a car only 2 people can sit in isn't very useful for most buyers.
+## 1.4 Checking how much each feature "tells us" about the others
+# Regular correlation doesn't work here because everything is categorical, so
+# I used mutual information instead - it tells us how much knowing one
+# variable reduces our uncertainty about another.
+library(infotheo)
+
+info_scores <- mutinformation(car_records)
+info_scores
+
+# How informative is each feature about acceptability specifically?
+info_scores[-7, 7]
+
+# Looking at the MI scores against acceptability: safety (0.192) and persons (0.149) stand out as the most informative features. buying (0.068) and maint (0.059) come next, then lug_boot (0.017), and doors (0.004) barely tells us anything. This lines up with what the tables showed earlier and gives a good idea of which features to keep when I do feature selection in part 2a.
+library(reshape2)
+
+info_long <- melt(info_scores)
+ggplot(info_long, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "#FFF7EC", high = "#7A0177") +
+  labs(title = "Mutual information between all variables", x = "", y = "", fill = "MI score") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# The heatmap makes the same pattern easier to see — the acceptability row is darkest under safety and persons, and almost white under doors, confirming those are the weakest and strongest predictors.
+## 1.5 Testing independence with chi-squared
+chisq.test(car_records$buying, car_records$acceptability)
+chisq.test(car_records$buying, car_records$maint)
+
+# Extra check - is boot size independent of acceptability?
+chisq.test(car_records$lug_boot, car_records$acceptability)
+
+# buying and acceptability are linked — the p-value is tiny (less than 2.2e-16), so this isn't random chance. buying and maint are not linked (p = 0.80), which makes sense since they're two separate things about a car. lug_boot and acceptability are linked too, but weaker (p = 0.0004533) compared to buying price.
+## 1.6 Splitting into training and testing data
+# This part has to stay exactly as given in the brief so results line up
+# across the class.
+library(caTools)
+set.seed(123)
+split <- sample.split(car_records$acceptability, SplitRatio = 0.8)
+train_set <- subset(car_records, split == TRUE)
+test_set  <- subset(car_records, split == FALSE)
+
+summary(train_set$acceptability)
+summary(test_set$acceptability)
+prop.table(table(train_set$acceptability))
+prop.table(table(test_set$acceptability))
+
+# The training and testing sets have almost the same mix of classes. Training is 69.25% unacc, testing is 69.5% unacc — very close. Same for the other classes too. So the split is fair, and it didn't put too many of one class into just one set.
+# Step 2a: Trying out different ML algorithms
+### Decision tree (C5.0)
+library(caret)
+library(C50)
+
+tree_fit  <- C5.0(train_set[-7], train_set$acceptability)
+tree_pred <- predict(tree_fit, test_set)
+confusionMatrix(tree_pred, test_set$acceptability)
+
+# The decision tree does really well — 96.5% accuracy and a Kappa of 0.925, which is very high (Kappa above 0.8 is usually seen as almost perfect agreement). Looking at each class: vgood is predicted perfectly (100% sensitivity), unacc is also very strong (97.8% sensitivity). good is a bit weaker at 87.5% sensitivity — it's the smallest class, so the model has less data to learn from it, which explains why it's slightly less accurate than the others.
+### Naive Bayes
+library(e1071)
+set.seed(123)
+
+bayes_fit  <- naiveBayes(train_set[, -7], train_set$acceptability)
+bayes_pred <- predict(bayes_fit, test_set)
+confusionMatrix(bayes_pred, test_set$acceptability)
+
+# Naive Bayes doesn't do as well as the decision tree — 85% accuracy and Kappa 0.66, which is decent but not great. The big weak point is vgood — sensitivity is only 0.29, meaning it only catches about 2 out of 7 vgood cars correctly, mixing most of them up with acc. unacc and acc are handled okay, but overall this model is clearly weaker than the decision tree, probably because Naive Bayes assumes features don't affect each other, which isn't really true here.
+### Multinomial logistic regression
+library(nnet)
+
+logit_fit  <- multinom(acceptability ~ ., data = train_set)
+logit_pred <- predict(logit_fit, test_set)
+confusionMatrix(logit_pred, test_set$acceptability)
+
+# Multinomial logistic regression does well too — 93.5% accuracy and Kappa 0.86, which is a big step up from Naive Bayes and close to the decision tree. All four classes are handled fairly evenly this time, with vgood at 0.86 sensitivity and good at 0.75 — no single class is being badly missed like it was with Naive Bayes. So out of the three models so far, the decision tree is still the best, but logistic regression comes in second.
+### Support Vector Machine
+library(kernlab)
+
+svm_fit_a  <- ksvm(acceptability ~ ., data = train_set, kernel = "vanilladot")
+svm_pred_a <- predict(svm_fit_a, test_set)
+confusionMatrix(svm_pred_a, test_set$acceptability)
+
+# SVM with a linear kernel gets 93.5% accuracy and Kappa 0.86 — basically tied with logistic regression. vgood is caught perfectly again (100% sensitivity), and good is at 0.75, same as logistic regression. So right now the decision tree is still ahead of the pack, with logistic regression and SVM close behind each other, and Naive Bayes clearly the weakest so far.
+# Trying the e1071 SVM implementation as well, just to compare
+svm_fit_b  <- svm(acceptability ~ ., data = train_set)
+svm_pred_b <- predict(svm_fit_b, test_set)
+confusionMatrix(svm_pred_b, test_set$acceptability)
+
+# This second SVM (using the e1071 package instead of kernlab) gets 88% accuracy, which looks fine on paper, but Kappa is lower at 0.74. Looking closer, this model completely misses good and vgood — sensitivity is 0.00 for both, meaning it never correctly predicts a single one of them, and just lumps them into acc instead. So even though the accuracy number looks okay, this model is actually worse than the kernlab SVM at the thing that matters — this is exactly why I flagged earlier that accuracy alone can be misleading with imbalanced classes like this.
+### Neural network
+# Reference: https://www.geeksforgeeks.org/r-language/neural-networks-using-the-r-nnet-package/
+net_fit  <- nnet(acceptability ~ ., data = train_set, size = 5)
+net_pred <- predict(net_fit, test_set, type = "class")
+confusionMatrix(factor(net_pred), test_set$acceptability)
+
+# The neural network gets 96.5% accuracy and Kappa 0.925 — tied with the decision tree as the best model so far. vgood is predicted perfectly again (100% sensitivity), and unacc is very strong too (98.6%). good is a bit lower at 75%, same weak spot as the other models, which makes sense since it's the smallest class with the least data to learn from.
+## Now with cross-validation via caret
+### Decision tree with CV
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+tree_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "C5.0", trControl = cv_ctrl)
+tree_fit_cv
+tree_pred_cv <- predict(tree_fit_cv, test_set)
+confusionMatrix(tree_pred_cv, test_set$acceptability)
+
+# Cross-validation pushed the decision tree up to 99% accuracy and Kappa 0.978, better than the basic version (96.5%). Caret tried different combos of trials, model, and winnow, and picked trials = 20, model = rules, winnow = FALSE as the best. Every class does well now, even good, which was the weak spot before. Shows tuning actually helps.
+### Naive Bayes with CV
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+bayes_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "nb", trControl = cv_ctrl)
+bayes_fit_cv
+bayes_pred_cv <- predict(bayes_fit_cv, test_set)
+confusionMatrix(bayes_pred_cv, test_set$acceptability)
+
+# This CV version of Naive Bayes gets the exact same result as the basic one — 85% accuracy, Kappa 0.66. That's because fL was held fixed at 0 and only usekernel was tried (FALSE vs TRUE), and both gave the same score anyway. So cross-validation didn't actually improve anything here, since the real tuning of fL happens later in part 2b. vgood is still the weak spot, same as before — sensitivity only 0.29.
+### Logistic regression with CV
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+logit_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "multinom",
+                        trControl = cv_ctrl, trace = FALSE)
+logit_fit_cv
+logit_pred_cv <- predict(logit_fit_cv, test_set)
+confusionMatrix(logit_pred_cv, test_set$acceptability)
+
+# The CV version of logistic regression gets 93% accuracy and Kappa 0.85, basically the same as the basic version (93.5%, Kappa 0.86) — no real improvement here. Caret tried three decay values (0, 1e-04, 1e-01) and picked decay = 1e-04 as best, though the difference between 0 and 1e-04 is tiny. This makes sense since logistic regression doesn't have much to tune compared to something like a decision tree.
+### Neural network with CV
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+net_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "nnet",
+                      trControl = cv_ctrl, trace = FALSE)
+net_fit_cv
+net_pred_cv <- predict(net_fit_cv, test_set)
+confusionMatrix(net_pred_cv, test_set$acceptability)
+
+# CV helped a lot here — accuracy jumped to 98% and Kappa to 0.956, up from the basic version's 96.5%/0.925. Caret tried different combos of size (number of hidden nodes) and decay, and the best result came from size = 5, decay = 0.1 — makes sense, since a bigger network with more regularisation to control overfitting worked better than the default size = 5 used in the basic version. unacc is predicted perfectly, and even good and vgood are both above 85% sensitivity, so this is one of the strongest models tried so far.
+### SVM with CV
+set.seed(123)
+svm_fit_cv  <- ksvm(acceptability ~ ., data = train_set, kernel = "vanilladot", cross = 10)
+svm_fit_cv
+svm_pred_cv <- predict(svm_fit_cv, test_set)
+confusionMatrix(svm_pred_cv, test_set$acceptability)
+
+# This SVM used ksvm's own built-in cross = 10 option instead of caret, but the numbers came out exactly the same as the basic SVM from before — 93.5% accuracy, Kappa 0.86. The cross-validation error shown (0.0975) is a bit higher than the training error (0.0725), which is normal and just means the model does slightly worse on unseen folds than on the data it trained on. Since the linear kernel has no real hyperparameters to tune here, it's expected that CV doesn't change the result much.
+## Picking the best features using mutual information
+info_train <- mutinformation(train_set)
+info_train
+info_train[7, -7]
+
+# On the training data, safety (0.191) and persons (0.143) come out as the strongest again, same as before on the full dataset — so the pattern holds even after splitting.
+# Trying a range of x values to see how accuracy changes
+for (x in 2:5) {
+  top_features <- names(sort(info_train[7, -7], decreasing = TRUE))[1:x]
+  tree_fit_x  <- C5.0(train_set[, top_features], train_set$acceptability)
+  tree_pred_x <- predict(tree_fit_x, test_set)
+  acc_x <- confusionMatrix(tree_pred_x, test_set$acceptability)$overall["Accuracy"]
+  cat("x =", x, "-> Accuracy:", round(acc_x, 4), "\n")
+}
+
+# Accuracy keeps going up as more features are added — x = 2 gives 80%, x = 3 gives 82%, x = 4 jumps to 88.5%, and x = 5 gets to 93%. So dropping too many features really hurts the model. Even though safety and persons had the highest MI scores alone, the other features still add useful information. This shows there's no shortcut — using more features (closer to all 6) gives better results than picking just the top few.
+# I'm going with the top three features - `persons`, `lug_boot`, `safety` -
+# based on their mutual information scores with the target.
+### Decision tree with fewer features
+tree_fit_top3  <- C5.0(train_set[, 4:6], train_set$acceptability)
+tree_pred_top3 <- predict(tree_fit_top3, test_set)
+confusionMatrix(tree_pred_top3, test_set$acceptability)
+
+# Using only the top 3 features (persons, lug_boot, safety) drops accuracy quite a bit — down to 81.5% and Kappa 0.60, compared to 96.5% with all 6 features. good and vgood are both completely missed now, sensitivity 0.00 for both. So even though persons and safety had the highest MI scores on their own, dropping buying and maint clearly hurts, since price and maintenance cost still add useful information the model needs, especially for spotting the smaller classes.
+### Naive Bayes with fewer features
+bayes_fit_top3  <- naiveBayes(train_set[, 4:6], train_set$acceptability)
+bayes_pred_top3 <- predict(bayes_fit_top3, test_set)
+confusionMatrix(bayes_pred_top3, test_set$acceptability)
+
+# Naive Bayes drops even more with fewer features — 78.5% accuracy, Kappa only 0.50. Both good and vgood are missed completely again, sensitivity 0.00. So the feature drop hurts Naive Bayes worse than it hurt the decision tree, since Naive Bayes already had a weaker starting point with vgood.
+### Logistic regression with fewer features
+logit_fit_top3  <- multinom(acceptability ~ persons + lug_boot + safety, data = train_set)
+logit_pred_top3 <- predict(logit_fit_top3, test_set)
+confusionMatrix(logit_pred_top3, test_set$acceptability)
+
+# Logistic regression with fewer features gets 81.5% accuracy, Kappa 0.60 — same numbers as the decision tree with fewer features, and same pattern too: good and vgood both completely missed, sensitivity 0.00. So again, dropping buying and maint costs the model its ability to spot the smaller classes, even though the remaining features had the highest MI scores individually.
+### SVM with fewer features
+svm_fit_top3  <- ksvm(acceptability ~ persons + lug_boot + safety, data = train_set, kernel = "vanilladot")
+svm_pred_top3 <- predict(svm_fit_top3, test_set)
+confusionMatrix(svm_pred_top3, test_set$acceptability)
+
+# SVM with fewer features drops to 79% accuracy, Kappa 0.51 — the biggest drop of all the models tried with just 3 features so far. good and vgood are both completely missed again, sensitivity 0.00. So SVM struggles the most when features are reduced, even worse than Naive Bayes and the decision tree did.
+# Step 2b: Squeezing out more performance
+## Tuning the neural network's decay rate
+tune_ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+net_grid  <- expand.grid(size = 5, decay = c(0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1))
+set.seed(123)
+
+net_tuned <- train(train_set[, -7], train_set[, 7], method = "nnet",
+                    trControl = tune_ctrl, tuneGrid = net_grid, trace = FALSE)
+plot(net_tuned)
+
+# Accuracy is lowest at decay = 0 (below 0.94), jumps up fast, then peaks around decay = 0.02–0.05 (close to 0.962), and starts dropping again by decay = 0.1. So a small amount of decay helps the network avoid overfitting, but too much decay hurts it again. The sweet spot looks to be somewhere around 0.02–0.05.
+## Tuning the decision tree's number of trials
+tune_ctrl  <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+tree_grid  <- expand.grid(model = "tree",
+                           trials = c(1, 5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100),
+                           winnow = FALSE)
+set.seed(123)
+
+tree_tuned <- train(train_set[, -7], train_set[, 7], method = "C5.0",
+                     trControl = tune_ctrl, tuneGrid = tree_grid)
+plot(tree_tuned)
+
+# Accuracy starts low with trials = 1 (below 0.945), climbs fast up to around trials = 20-30 (about 0.962), then flattens out and stays roughly the same all the way to trials = 100. So more boosting rounds help at first, but after about 20-30 trials, adding more doesn't really improve anything — the model has already learned what it can from this data.
+## Tuning naive Bayes's fL (Laplace correction)
+tune_ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+bayes_grid <- expand.grid(fL = c(0, 0.5, 1, 2, 5), usekernel = FALSE, adjust = 1)
+set.seed(123)
+
+bayes_tuned <- train(train_set[, -7], train_set[, 7], method = "nb",
+                      trControl = tune_ctrl, tuneGrid = bayes_grid)
+plot(bayes_tuned)
+
+# Accuracy is highest at fL = 0 (close to 0.84), and just keeps dropping as fL goes up, down to about 0.82 at fL = 5. So unlike the neural network or decision tree, adding Laplace correction here doesn't help at all — it actually makes things worse. The default fL = 0 turns out to be the best choice for this dataset.
+# Part 3. Presentation of Specified Results
+# *(To be finalised in the lab once the exact figures required are confirmed.)*
+## References
+# - Kuhn, M. (2008) 'Building predictive models in R using the caret package',
+# *Journal of Statistical Software*, 28(5), pp. 1-26.
+# - UCI Machine Learning Repository (1997) *Car Evaluation Data Set*. Available
+# at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [17 August 2026]).
+# - Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: Springer-Verlag.
