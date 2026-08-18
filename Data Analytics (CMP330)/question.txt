@@ -1,0 +1,51 @@
+Question 1 (1 Point)
+How many cars in the dataset have been identified as "acceptable"?
+
+Question 2 (2 Points)
+How many cars have high safety and are "good"?
+
+Question 4 (2 Points)
+Which pair of features have the greatest mutual information with each other?
+A. buying B. maint C. lug_boot D. safety E. persons F. doors
+(Select up to 2 options)
+
+Question 5 (2 Points)
+When a chi-squared test is used to test whether the variables persons and doors are independent, the p-value is ___ and hence the null hypothesis that they are independent can be ___.
+(5% significance level; first blank to 3 decimal places; second blank "rejected" or "accepted")
+
+Question 7 (4 Points)
+You should implement a basic version of the Decision Tree algorithm. This basic version should be trained on the training set using the C5.0 function (from the C50 library) without feature selection (in the same way as it was applied to the Iris dataset in the "Guidance for Assessment 2" document) and the resulting model then applied to the test set. State the accuracy on the test set as a number between 0 and 1. (Your answer should be stated to 3 decimal places.)
+
+Question 8 (4 Points)
+You should implement a basic version of Neural Networks. This basic version should be trained on the training set using the nnet function (from the nnet library) without feature selection and the resulting model then applied to the test set (in the same way as it was applied to the Iris dataset in the "Guidance for Assessment 2" document including the parameter size = 3). State the accuracy on the test set as a number between 0 and 1. (Your answer should be stated to 3 decimal places.)
+Before calling the nnet function, you should run the following code:
+set.seed(123)
+
+Question 9 (6 Points)
+You should implement the Decision Tree approach with 10-fold cross-validation. It should be trained on the training set using the train function (from the caret library) and specifying the C5.0 method (from the C50 library) without feature selection (hint: see how the naive Bayes approach was used with cross-validation in the "Guidance for Assessment 2" document). The resulting model should then be applied to the test set. State the sensitivity for the "good" class on the test set as a number between 0 and 1. (Your answer should be stated to 3 decimal places.)
+Before calling the train function, you should run the following code:
+set.seed(123)
+(Hint: you should use the trainControl function from the caret library to specify the cross-validation method and number of folds, but otherwise use default parameters.)
+
+Question 10 (6 Points)
+You should implement Naive Bayes with feature selection. In particular, you should train a model with more than two features: lug_boot and the two features that have the greatest mutual information with the target variable (acceptability) on the training set. The model should be trained on the training set using the naiveBayes function (from the e1071 library) and the resulting model then applied to the test set. State the accuracy on the test set as a number between 0 and 1. (Your answer should be stated to 3 decimal places.)
+(Please note that you should not use cross-validation for this question, but rather modify the basic application of this approach as described in the "Guidance for Assessment 2" document.)
+
+Question 11 (20 Points)
+This question addresses parts 2b and 3 of Assessment 2. You should address the points below and upload it as your response to this question. You should upload file as a pdf and/or Word document. Your submission should contain focused answers. It should have two sections clearly labelled for Part 2b and Part 3 which only include relevant text, code and output (including the specified figures) as specified below.
+
+Part 2b – Improving Model Performance (5 points)
+You should explore the tuning of the trials parameter for the Decision Tree approach considering a range of values between 1 and 100. This should be carried out on the training set and other parameters should be set as follows: model = "tree" and winnow = FALSE. You should use 10-fold cross-validation preferably with 10 repetitions (this can be specified with appropriate arguments in the trainControl function).
+Before calling the train function, you should run the following code:
+set.seed(123)
+You should include the following in the notebook for this section:
+a) a figure showing how the accuracy varies with trials,
+b) a two line description of the figure which should also identify a suitable value to select.
+(If necessary, you can include one further sentence if further clarification is needed about what you have done.)
+
+Part 3 – Presentation of Specified Results (15 points)
+You should include the following in the notebook for this section:
+a) a barchart to show the distribution for the target variable acceptability, (4 points)
+b) a barchart to show the distribution for acceptability broken down by the values of the variable buying with a one sentence explanation of it. Note that acceptability should be on the x-axis. (6 points)
+c) a listing of references in Harvard style for relevant sources. (5 points)
+(Note: you can use the whole dataset for parts 3a and 3b.)
