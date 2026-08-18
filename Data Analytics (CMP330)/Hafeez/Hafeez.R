@@ -1,0 +1,277 @@
+# ============================================================================
+# CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
+# Author: Syed Abdul Hafeez - B01012379
+# ============================================================================
+
+# What this notebook does
+# I'm building a model that looks at a car's price, maintenance cost, doors, 
+# seats, boot size and safety, and predicts whether it counts as unacceptable, 
+# acceptable, good, or very good. I'll compare five different algorithms to 
+# see which works best.
+
+# ============================================================================
+# Getting the data ready
+# ============================================================================
+
+# Reading and cleaning
+vehicle.df <- read.csv("car.csv")
+vehicle.df <- data.frame(lapply(vehicle.df, factor))
+
+head(vehicle.df)
+str(vehicle.df)
+
+# Looking at the raw numbers first
+
+# How many cars per acceptability class
+table(vehicle.df$acceptability)
+
+# Buying price against acceptability
+table(vehicle.df$buying, vehicle.df$acceptability)
+
+# Extra cross-tab: maintenance cost against safety - checking if 
+# expensive-to-maintain cars tend to also be less safe
+table(vehicle.df$maint, vehicle.df$safety)
+
+# Extra cross-tab: doors against acceptability
+table(vehicle.df$doors, vehicle.df$acceptability)
+
+# Charts
+library(ggplot2)
+
+vehicle.df$acceptability <- factor(vehicle.df$acceptability,
+                                    levels = c("unacc", "acc", "good", "vgood"))
+
+# Overall distribution
+ggplot(vehicle.df, aes(x = acceptability)) +
+  geom_bar(fill = "#556B2F") +
+  labs(title = "Overall spread of car acceptability", x = "Acceptability", y = "Count") +
+  theme_bw()
+
+# Split by buying price
+ggplot(vehicle.df, aes(x = acceptability, fill = buying)) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = c("#E76F51", "#F4A261", "#2A9D8F", "#264653")) +
+  labs(title = "Acceptability split by buying price", x = "Acceptability", y = "Count") +
+  theme_bw()
+
+# Extra chart: split by lug_boot size
+ggplot(vehicle.df, aes(x = acceptability, fill = lug_boot)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette = "Accent") +
+  labs(title = "Acceptability split by boot size", x = "Acceptability", y = "Count") +
+  theme_bw()
+
+# Mutual information instead of correlation
+# Correlation only makes sense for numeric data, and everything here is 
+# categorical, so mutual information is the right tool instead.
+
+library(infotheo)
+
+mi.table <- mutinformation(vehicle.df)
+mi.table
+
+# How informative is each predictor about the target column?
+mi.table[-7, 7]
+
+library(reshape2)
+
+mi.long <- melt(mi.table)
+ggplot(mi.long, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "#FDE0DD", high = "#980043") +
+  labs(title = "Mutual information heatmap across all variables", x = "", y = "", fill = "MI") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Chi-squared tests
+
+chisq.test(vehicle.df$buying, vehicle.df$acceptability)
+chisq.test(vehicle.df$buying, vehicle.df$maint)
+
+# Extra test: persons against acceptability
+chisq.test(vehicle.df$persons, vehicle.df$acceptability)
+
+# Splitting the data
+
+library(caTools)
+set.seed(123)
+split <- sample.split(vehicle.df$acceptability, SplitRatio = 0.8)
+vehicle.train <- subset(vehicle.df, split == TRUE)
+vehicle.test  <- subset(vehicle.df, split == FALSE)
+
+summary(vehicle.train$acceptability)
+summary(vehicle.test$acceptability)
+prop.table(table(vehicle.train$acceptability))
+prop.table(table(vehicle.test$acceptability))
+
+# ============================================================================
+# Building and testing the models
+# ============================================================================
+
+# DECISION TREE (C5.0)
+
+library(caret)
+library(C50)
+
+c50.fit  <- C5.0(vehicle.train[-7], vehicle.train$acceptability)
+c50.pred <- predict(c50.fit, vehicle.test)
+confusionMatrix(c50.pred, vehicle.test$acceptability)
+
+# NAIVE BAYES
+
+library(e1071)
+set.seed(123)
+
+nb.fit  <- naiveBayes(vehicle.train[, -7], vehicle.train$acceptability)
+nb.pred <- predict(nb.fit, vehicle.test)
+confusionMatrix(nb.pred, vehicle.test$acceptability)
+
+# LOGISTIC REGRESSION (MULTINOMIAL)
+
+library(nnet)
+
+mlr.fit  <- multinom(acceptability ~ ., data = vehicle.train)
+mlr.pred <- predict(mlr.fit, vehicle.test)
+confusionMatrix(mlr.pred, vehicle.test$acceptability)
+
+# SUPPORT VECTOR MACHINE (SVM)
+
+library(kernlab)
+
+svm.fit.linear  <- ksvm(acceptability ~ ., data = vehicle.train, kernel = "vanilladot")
+svm.pred.linear <- predict(svm.fit.linear, vehicle.test)
+confusionMatrix(svm.pred.linear, vehicle.test$acceptability)
+
+svm.fit.default  <- svm(acceptability ~ ., data = vehicle.train)
+svm.pred.default <- predict(svm.fit.default, vehicle.test)
+confusionMatrix(svm.pred.default, vehicle.test$acceptability)
+
+# NEURAL NETWORK
+
+# Reference: https://www.geeksforgeeks.org/r-language/neural-networks-using-the-r-nnet-package/
+ann.fit  <- nnet(acceptability ~ ., data = vehicle.train, size = 5)
+ann.pred <- predict(ann.fit, vehicle.test, type = "class")
+confusionMatrix(factor(ann.pred), vehicle.test$acceptability)
+
+# ============================================================================
+# Same models, but with 10-fold cross-validation
+# ============================================================================
+
+# DECISION TREE, CROSS-VALIDATED
+
+ctrl.cv <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+c50.cv.fit  <- train(vehicle.train[, -7], vehicle.train[, 7], method = "C5.0", trControl = ctrl.cv)
+c50.cv.fit
+c50.cv.pred <- predict(c50.cv.fit, vehicle.test)
+confusionMatrix(c50.cv.pred, vehicle.test$acceptability)
+
+# NAIVE BAYES, CROSS-VALIDATED
+
+ctrl.cv <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+nb.cv.fit  <- train(vehicle.train[, -7], vehicle.train[, 7], method = "nb", trControl = ctrl.cv)
+nb.cv.fit
+nb.cv.pred <- predict(nb.cv.fit, vehicle.test)
+confusionMatrix(nb.cv.pred, vehicle.test$acceptability)
+
+# LOGISTIC REGRESSION, CROSS-VALIDATED
+
+ctrl.cv <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+mlr.cv.fit  <- train(vehicle.train[, -7], vehicle.train[, 7], method = "multinom",
+                      trControl = ctrl.cv, trace = FALSE)
+mlr.cv.fit
+mlr.cv.pred <- predict(mlr.cv.fit, vehicle.test)
+confusionMatrix(mlr.cv.pred, vehicle.test$acceptability)
+
+# NEURAL NETWORK, CROSS-VALIDATED
+
+ctrl.cv <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+ann.cv.fit  <- train(vehicle.train[, -7], vehicle.train[, 7], method = "nnet",
+                      trControl = ctrl.cv, trace = FALSE)
+ann.cv.fit
+ann.cv.pred <- predict(ann.cv.fit, vehicle.test)
+confusionMatrix(ann.cv.pred, vehicle.test$acceptability)
+
+# SVM, CROSS-VALIDATED
+
+set.seed(123)
+svm.cv.fit  <- ksvm(acceptability ~ ., data = vehicle.train, kernel = "vanilladot", cross = 10)
+svm.cv.fit
+svm.cv.pred <- predict(svm.cv.fit, vehicle.test)
+confusionMatrix(svm.cv.pred, vehicle.test$acceptability)
+
+# ============================================================================
+# Trying fewer, more informative features
+# ============================================================================
+
+mi.train <- mutinformation(vehicle.train)
+mi.train
+mi.train[7, -7]
+
+# `persons`, `lug_boot`, and `safety` come out on top, so those three are used 
+# below instead of all six features.
+
+# DECISION TREE WITH TOP FEATURES ONLY
+
+c50.fs.fit  <- C5.0(vehicle.train[, 4:6], vehicle.train$acceptability)
+c50.fs.pred <- predict(c50.fs.fit, vehicle.test)
+confusionMatrix(c50.fs.pred, vehicle.test$acceptability)
+
+# NAIVE BAYES WITH TOP FEATURES ONLY
+
+nb.fs.fit  <- naiveBayes(vehicle.train[, 4:6], vehicle.train$acceptability)
+nb.fs.pred <- predict(nb.fs.fit, vehicle.test)
+confusionMatrix(nb.fs.pred, vehicle.test$acceptability)
+
+# LOGISTIC REGRESSION WITH TOP FEATURES ONLY
+
+mlr.fs.fit  <- multinom(acceptability ~ persons + lug_boot + safety, data = vehicle.train)
+mlr.fs.pred <- predict(mlr.fs.fit, vehicle.test)
+confusionMatrix(mlr.fs.pred, vehicle.test$acceptability)
+
+# ============================================================================
+# Fine-tuning for better accuracy
+# ============================================================================
+
+# NEURAL NETWORK - TUNING DECAY
+
+tune.ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+ann.grid  <- expand.grid(size = 5, decay = c(0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1))
+set.seed(123)
+
+ann.tuned <- train(vehicle.train[, -7], vehicle.train[, 7], method = "nnet",
+                    trControl = tune.ctrl, tuneGrid = ann.grid, trace = FALSE)
+plot(ann.tuned)
+
+# DECISION TREE - TUNING NUMBER OF BOOSTING TRIALS
+
+tune.ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+c50.grid  <- expand.grid(model = "tree",
+                          trials = c(1, 5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100),
+                          winnow = FALSE)
+set.seed(123)
+
+c50.tuned <- train(vehicle.train[, -7], vehicle.train[, 7], method = "C5.0",
+                    trControl = tune.ctrl, tuneGrid = c50.grid)
+plot(c50.tuned)
+
+# ============================================================================
+# Part 3. Presentation of Specified Results
+# ============================================================================
+# (To be finalised in the lab session once exact required figures are confirmed.)
+
+# ============================================================================
+# References
+# ============================================================================
+# - Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
+#   Journal of Statistical Software, 28(5), pp. 1-26.
+# - UCI Machine Learning Repository (1997) Car Evaluation Data Set. Available 
+#   at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
+# - Wickham, H. (2016) ggplot2: Elegant Graphics for Data Analysis. 
+#   New York: Springer-Verlag.
