@@ -44,6 +44,15 @@ table(car_records$acceptability)
 
 ```
 
+```{r}
+nrow(subset(car_records, doors == "4" & acceptability == "vgood"))
+```
+
+```{r}
+nrow(subset(car_records, safety == "high" & acceptability == "good"))
+```
+
+
 Most cars fall into unacc (693 out of 1000), with good and vgood making up only about 4% and 3.5% each. This is quite imbalanced, so later on I need to be careful — a model could get high accuracy just by guessing unacc every time, so accuracy alone won't tell the full story.
 
 ```{r}
@@ -108,6 +117,14 @@ ggplot(car_records, aes(x = acceptability, fill = persons)) +
   theme_minimal()
 ```
 Cars that seat only 2 people are almost all unacc. None of them get good or vgood. Cars that seat 4 or more can get any rating, including good and vgood. So a 2-seater can't really be a "good" car in this data, no matter what else about it is nice. This makes sense — a car only 2 people can sit in isn't very useful for most buyers.
+
+```{r}
+library(infotheo)
+feats <- c("buying","maint","doors","persons","lug_boot","safety")
+info_scores <- mutinformation(car_records[, feats])
+info_scores  # inspect the matrix, ignoring the diagonal
+```
+
 
 
 ## 1.4 Checking how much each feature "tells us" about the others
@@ -191,6 +208,19 @@ confusionMatrix(tree_pred, test_set$acceptability)
 The decision tree does really well — 96.5% accuracy and a Kappa of 0.925, which is very high (Kappa above 0.8 is usually seen as almost perfect agreement). Looking at each class: vgood is predicted perfectly (100% sensitivity), unacc is also very strong (97.8% sensitivity). good is a bit weaker at 87.5% sensitivity — it's the smallest class, so the model has less data to learn from it, which explains why it's slightly less accurate than the others.
 
 
+```{r}
+library(caret)
+library(C50)
+
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+tree_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "C5.0", trControl = cv_ctrl)
+tree_pred_cv <- predict(tree_fit_cv, test_set)
+confusionMatrix(tree_pred_cv, test_set$acceptability)
+```
+
+
 ### Naive Bayes
 
 ```{r}
@@ -204,6 +234,37 @@ confusionMatrix(bayes_pred, test_set$acceptability)
 
 Naive Bayes doesn't do as well as the decision tree — 85% accuracy and Kappa 0.66, which is decent but not great. The big weak point is vgood — sensitivity is only 0.29, meaning it only catches about 2 out of 7 vgood cars correctly, mixing most of them up with acc. unacc and acc are handled okay, but overall this model is clearly weaker than the decision tree, probably because Naive Bayes assumes features don't affect each other, which isn't really true here.
 
+```{r}
+library(caret)
+library(C50)
+
+tree_fit  <- C5.0(train_set[-7], train_set$acceptability)
+tree_pred <- predict(tree_fit, test_set)
+confusionMatrix(tree_pred, test_set$acceptability)
+```
+```{r}
+library(nnet)
+set.seed(123)
+net_fit  <- nnet(acceptability ~ ., data = train_set, size = 3)
+net_pred <- predict(net_fit, test_set, type = "class")
+confusionMatrix(factor(net_pred), test_set$acceptability)
+```
+
+
+```{r}
+library(caTools)
+set.seed(123)
+split <- sample.split(car_records$acceptability, SplitRatio = 0.8)
+train_set <- subset(car_records, split == TRUE)
+test_set  <- subset(car_records, split == FALSE)
+
+library(kernlab)
+svm_fit_a  <- ksvm(acceptability ~ ., data = train_set, kernel = "vanilladot")
+svm_pred_a <- predict(svm_fit_a, test_set)
+confusionMatrix(svm_pred_a, test_set$acceptability)
+```
+
+
 ### Multinomial logistic regression
 
 ```{r}
@@ -214,6 +275,51 @@ logit_pred <- predict(logit_fit, test_set)
 confusionMatrix(logit_pred, test_set$acceptability)
 ```
 Multinomial logistic regression does well too — 93.5% accuracy and Kappa 0.86, which is a big step up from Naive Bayes and close to the decision tree. All four classes are handled fairly evenly this time, with vgood at 0.86 sensitivity and good at 0.75 — no single class is being badly missed like it was with Naive Bayes. So out of the three models so far, the decision tree is still the best, but logistic regression comes in second.
+
+```{r}
+library(nnet)
+logit_fit_top3  <- multinom(acceptability ~ persons + lug_boot + safety, data = train_set)
+logit_pred_top3 <- predict(logit_fit_top3, test_set)
+confusionMatrix(logit_pred_top3, test_set$acceptability)
+```
+
+
+
+```{r}
+bayes_fit_top3  <- naiveBayes(train_set[, 4:6], train_set$acceptability)
+bayes_pred_top3 <- predict(bayes_fit_top3, test_set)
+confusionMatrix(bayes_pred_top3, test_set$acceptability)
+```
+
+
+```{r}
+library(nnet)
+set.seed(123)
+net_fit  <- nnet(acceptability ~ ., data = train_set, size = 3)
+net_pred <- predict(net_fit, test_set, type = "class")
+confusionMatrix(factor(net_pred), test_set$acceptability)
+```
+
+
+```{r}
+library(caret)
+library(C50)
+
+tree_fit  <- C5.0(train_set[-7], train_set$acceptability)
+tree_pred <- predict(tree_fit, test_set)
+confusionMatrix(tree_pred, test_set$acceptability)
+```
+
+
+```{r}
+library(caret)
+library(C50)
+
+tree_fit  <- C5.0(train_set[-7], train_set$acceptability)
+tree_pred <- predict(tree_fit, test_set)
+confusionMatrix(tree_pred, test_set$acceptability)
+```
+
 
 ### Support Vector Machine
 
@@ -261,6 +367,25 @@ tree_pred_cv <- predict(tree_fit_cv, test_set)
 confusionMatrix(tree_pred_cv, test_set$acceptability)
 ```
 Cross-validation pushed the decision tree up to 99% accuracy and Kappa 0.978, better than the basic version (96.5%). Caret tried different combos of trials, model, and winnow, and picked trials = 20, model = rules, winnow = FALSE as the best. Every class does well now, even good, which was the weak spot before. Shows tuning actually helps.
+
+```{r}
+library(caret)
+library(C50)
+
+cv_ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+tree_fit_cv  <- train(train_set[, -7], train_set[, 7], method = "C5.0", trControl = cv_ctrl)
+tree_pred_cv <- predict(tree_fit_cv, test_set)
+confusionMatrix(tree_pred_cv, test_set$acceptability)
+```
+
+```{r}
+logit_fit_top3  <- multinom(acceptability ~ persons + lug_boot + safety, data = train_set)
+logit_pred_top3 <- predict(logit_fit_top3, test_set)
+confusionMatrix(logit_pred_top3, test_set$acceptability)
+```
+
 
 ### Naive Bayes with CV
 
@@ -384,6 +509,13 @@ confusionMatrix(svm_pred_top3, test_set$acceptability)
 SVM with fewer features drops to 79% accuracy, Kappa 0.51 — the biggest drop of all the models tried with just 3 features so far. good and vgood are both completely missed again, sensitivity 0.00. So SVM struggles the most when features are reduced, even worse than Naive Bayes and the decision tree did.
 
 
+```{r}
+bayes_fit_top3  <- naiveBayes(train_set[, 4:6], train_set$acceptability)
+bayes_pred_top3 <- predict(bayes_fit_top3, test_set)
+confusionMatrix(bayes_pred_top3, test_set$acceptability)
+```
+
+
 ---
 
 # Step 2b: Squeezing out more performance
@@ -445,3 +577,11 @@ Accuracy is highest at fL = 0 (close to 0.84), and just keeps dropping as fL goe
 - UCI Machine Learning Repository (1997) *Car Evaluation Data Set*. Available 
   at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [17 August 2026]).
 - Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: Springer-Verlag.
+- Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: 
+  Springer-Verlag.
+- Ripley, B. (2023) *nnet: Feed-Forward Neural Networks and Multinomial 
+  Log-Linear Models*. R package.
+- Kuhn, M. (2023) *C50: C5.0 Decision Trees and Rule-Based Models*. R package.
+- Karatzoglou, A. et al. (2004) *kernlab: An S4 Package for Kernel Methods 
+  in R*. R package.
+- Wickham, H. (2007) *reshape2: Flexibly Reshape Data*. R package.

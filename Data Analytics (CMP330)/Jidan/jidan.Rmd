@@ -50,6 +50,49 @@ table(car_data$safety, car_data$acceptability)
 summary(car_data)
 ```
 
+```{r}
+table(car_data$acceptability)["acc"]
+```
+
+
+
+```{r}
+table(Buying = car_data$buying, Acceptability = car_data$acceptability)
+```
+
+```{r}
+# Cross-tabulation: buying price vs acceptability
+buy_table <- table(car_data$buying, car_data$acceptability)
+buy_table
+
+# Extract the specific cell: high buying price, "good" acceptability
+buy_table["high", "good"]
+```
+
+
+```{r}
+mutinformation(car_data$persons, car_data$acceptability)
+```
+
+
+```{r}
+mi_matrix <- mutinformation(car_data[, 1:6])  # exclude acceptability
+mi_matrix
+
+# Find the max off-diagonal value
+diag(mi_matrix) <- 0
+which(mi_matrix == max(mi_matrix), arr.ind = TRUE)
+```
+```{r}
+chisq.test(car_data$persons, car_data$doors)
+```
+```{r}
+prop.table(table(car_test$acceptability))["vgood"]
+```
+
+
+
+
 ## 1.3 Visualising the distributions
 
 I used `ggplot2` to visualise the target distribution on its own, and then 
@@ -197,6 +240,25 @@ but overall the model fits the data well even before tuning.*
 
 ### Naive Bayes
 
+
+```{r}
+library(e1071)
+set.seed(123)
+
+nb_model <- naiveBayes(car_train[, -7], car_train$acceptability)
+nb_pred  <- predict(nb_model, car_test)
+confusionMatrix(nb_pred, car_test$acceptability)
+```
+
+```{r}
+### Logistic Regression with selected features
+
+logreg_fs_model <- multinom(acceptability ~ persons + lug_boot + safety, data = car_train)
+logreg_fs_pred  <- predict(logreg_fs_model, car_test)
+confusionMatrix(logreg_fs_pred, car_test$acceptability)
+```
+
+
 ```{r}
 library(e1071)
 set.seed(123)
@@ -262,6 +324,18 @@ confusionMatrix(nn_pred, car_test$acceptability)
 of 0.899, doing well across all four classes including a perfect score on 
 unacc. This is one of the strongest basic models so far, close to the 
 decision tree.*
+
+```{r}
+library(nnet)
+set.seed(123)
+
+nn_model <- nnet(acceptability ~ ., data = car_train, size = 3)
+nn_pred  <- predict(nn_model, car_test, type = "class")
+nn_pred  <- factor(nn_pred, levels = levels(car_test$acceptability))
+
+confusionMatrix(nn_pred, car_test$acceptability)
+```
+
 
 ## Using caret::train() with cross-validation
 
@@ -337,6 +411,21 @@ confusionMatrix(logreg_cv_pred, car_test$acceptability)
 version (93.5%). CV picked a very small decay (1e-04), and larger decay 
 values (0.1) actually hurt accuracy slightly, suggesting the basic model 
 was already close to optimal.*
+
+```{r}
+library(caret)
+library(nnet)
+
+ctrl <- trainControl(method = "cv", number = 10)
+set.seed(123)
+
+nn_cv_model <- train(car_train[, -7], car_train[, 7], method = "nnet",
+                      trControl = ctrl, trace = FALSE)
+
+nn_cv_pred <- predict(nn_cv_model, car_test)
+confusionMatrix(nn_cv_pred, car_test$acceptability)
+```
+
 
 ### Neural Network with CV
 
