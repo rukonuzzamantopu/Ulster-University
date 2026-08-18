@@ -1,35 +1,26 @@
----
-title: "CMP330 Data Analytics - Assessment 2 (Pre-Assignment)"
-author: "Sheheryar Khan [B01010078]
-"
-output:
-  html_notebook: default
-  pdf_document: default
----
+# ============================================================================
+# CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
+# ============================================================================
 
 # Objective
+# Predict the acceptability class of a car (`unacc`, `acc`, `good`, `vgood`) 
+# from six categorical features, using five ML algorithms, and compare their 
+# performance.
 
-Predict the acceptability class of a car (`unacc`, `acc`, `good`, `vgood`) 
-from six categorical features, using five ML algorithms, and compare their 
-performance.
-
----
-
+# ============================================================================
 # 1. Data Preparation and Exploration
+# ============================================================================
 
-## 1.1 Load and clean
+# 1.1 Load and clean
 
-```{r}
 carDF <- read.csv("car.csv")
 carDF <- data.frame(lapply(carDF, factor))
 
 head(carDF)
 str(carDF)
-```
 
-## 1.2 Frequency tables
+# 1.2 Frequency tables
 
-```{r}
 # Target class counts
 table(carDF$acceptability)
 
@@ -41,11 +32,9 @@ table(carDF$buying, carDF$safety)
 
 # Extra: doors vs lug_boot
 table(carDF$doors, carDF$lug_boot)
-```
 
-## 1.3 Plots
+# 1.3 Plots
 
-```{r}
 library(ggplot2)
 
 carDF$acceptability <- factor(carDF$acceptability,
@@ -70,11 +59,9 @@ ggplot(carDF, aes(x = acceptability, fill = safety)) +
   scale_fill_brewer(palette = "Paired") +
   labs(title = "Acceptability vs Safety Rating", x = "Acceptability", y = "Count") +
   theme_classic()
-```
 
-## 1.4 Mutual information
+# 1.4 Mutual information
 
-```{r}
 library(infotheo)
 
 miMat <- mutinformation(carDF)
@@ -82,9 +69,7 @@ miMat
 
 # Feature relevance to target
 miMat[-7, 7]
-```
 
-```{r}
 library(reshape2)
 
 miLong <- melt(miMat)
@@ -93,21 +78,17 @@ ggplot(miLong, aes(x = Var1, y = Var2, fill = value)) +
   scale_fill_gradient(low = "#E5F5E0", high = "#00441B") +
   labs(title = "Mutual Information Heatmap", x = "", y = "", fill = "MI") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
-## 1.5 Chi-squared tests
+# 1.5 Chi-squared tests
 
-```{r}
 chisq.test(carDF$buying, carDF$acceptability)
 chisq.test(carDF$buying, carDF$maint)
 
 # Extra: maint vs acceptability
 chisq.test(carDF$maint, carDF$acceptability)
-```
 
-## 1.6 Train/test split (fixed, per brief)
+# 1.6 Train/test split (fixed, per brief)
 
-```{r}
 library(caTools)
 set.seed(123)
 split <- sample.split(carDF$acceptability, SplitRatio = 0.8)
@@ -118,74 +99,62 @@ summary(trainDF$acceptability)
 summary(testDF$acceptability)
 prop.table(table(trainDF$acceptability))
 prop.table(table(testDF$acceptability))
-```
 
----
-
+# ============================================================================
 # 2. Model Training and Evaluation
+# ============================================================================
 
-### 2.1 Decision Tree (C5.0)
+# 2.1 DECISION TREE (C5.0)
 
-```{r}
 library(caret)
 library(C50)
 
 m.c50  <- C5.0(trainDF[-7], trainDF$acceptability)
 p.c50  <- predict(m.c50, testDF)
 confusionMatrix(p.c50, testDF$acceptability)
-```
 
-### 2.2 Naive Bayes
+# 2.2 NAIVE BAYES
 
-```{r}
 library(e1071)
 set.seed(123)
 
 m.nb  <- naiveBayes(trainDF[, -7], trainDF$acceptability)
 p.nb  <- predict(m.nb, testDF)
 confusionMatrix(p.nb, testDF$acceptability)
-```
 
-### 2.3 Multinomial Logistic Regression
+# 2.3 MULTINOMIAL LOGISTIC REGRESSION
 
-```{r}
 library(nnet)
 
 m.mnl  <- multinom(acceptability ~ ., data = trainDF)
 p.mnl  <- predict(m.mnl, testDF)
 confusionMatrix(p.mnl, testDF$acceptability)
-```
 
-### 2.4 SVM
+# 2.4 SUPPORT VECTOR MACHINE (SVM)
 
-```{r}
 library(kernlab)
 
 m.svm1  <- ksvm(acceptability ~ ., data = trainDF, kernel = "vanilladot")
 p.svm1  <- predict(m.svm1, testDF)
 confusionMatrix(p.svm1, testDF$acceptability)
-```
 
-```{r}
 m.svm2  <- svm(acceptability ~ ., data = trainDF)
 p.svm2  <- predict(m.svm2, testDF)
 confusionMatrix(p.svm2, testDF$acceptability)
-```
 
-### 2.5 Neural Network
+# 2.5 NEURAL NETWORK
 
-```{r}
 # Reference: https://www.geeksforgeeks.org/r-language/neural-networks-using-the-r-nnet-package/
 m.nn  <- nnet(acceptability ~ ., data = trainDF, size = 5)
 p.nn  <- predict(m.nn, testDF, type = "class")
 confusionMatrix(factor(p.nn), testDF$acceptability)
-```
 
-## 2.6 Cross-validated versions (caret)
+# ============================================================================
+# 2.6 Cross-validated versions (caret)
+# ============================================================================
 
-### Decision Tree - CV
+# DECISION TREE - CV
 
-```{r}
 ctl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -193,11 +162,9 @@ m.c50.cv  <- train(trainDF[, -7], trainDF[, 7], method = "C5.0", trControl = ctl
 m.c50.cv
 p.c50.cv <- predict(m.c50.cv, testDF)
 confusionMatrix(p.c50.cv, testDF$acceptability)
-```
 
-### Naive Bayes - CV
+# NAIVE BAYES - CV
 
-```{r}
 ctl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -205,11 +172,9 @@ m.nb.cv  <- train(trainDF[, -7], trainDF[, 7], method = "nb", trControl = ctl)
 m.nb.cv
 p.nb.cv <- predict(m.nb.cv, testDF)
 confusionMatrix(p.nb.cv, testDF$acceptability)
-```
 
-### Logistic Regression - CV
+# LOGISTIC REGRESSION - CV
 
-```{r}
 ctl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -218,11 +183,9 @@ m.mnl.cv  <- train(trainDF[, -7], trainDF[, 7], method = "multinom",
 m.mnl.cv
 p.mnl.cv <- predict(m.mnl.cv, testDF)
 confusionMatrix(p.mnl.cv, testDF$acceptability)
-```
 
-### Neural Network - CV
+# NEURAL NETWORK - CV
 
-```{r}
 ctl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -231,59 +194,49 @@ m.nn.cv  <- train(trainDF[, -7], trainDF[, 7], method = "nnet",
 m.nn.cv
 p.nn.cv <- predict(m.nn.cv, testDF)
 confusionMatrix(p.nn.cv, testDF$acceptability)
-```
 
-### SVM - CV
+# SVM - CV
 
-```{r}
 set.seed(123)
 m.svm.cv  <- ksvm(acceptability ~ ., data = trainDF, kernel = "vanilladot", cross = 10)
 m.svm.cv
 p.svm.cv <- predict(m.svm.cv, testDF)
 confusionMatrix(p.svm.cv, testDF$acceptability)
-```
 
-## 2.7 Feature Selection
+# ============================================================================
+# 2.7 Feature Selection
+# ============================================================================
 
-```{r}
 miTrain <- mutinformation(trainDF)
 miTrain
 miTrain[7, -7]
-```
 
-Top 3 features by MI score: `persons`, `lug_boot`, `safety`.
+# Top 3 features by MI score: `persons`, `lug_boot`, `safety`.
 
-### Decision Tree - top 3 features
+# DECISION TREE - TOP 3 FEATURES
 
-```{r}
 m.c50.fs  <- C5.0(trainDF[, 4:6], trainDF$acceptability)
 p.c50.fs  <- predict(m.c50.fs, testDF)
 confusionMatrix(p.c50.fs, testDF$acceptability)
-```
 
-### Naive Bayes - top 3 features
+# NAIVE BAYES - TOP 3 FEATURES
 
-```{r}
 m.nb.fs  <- naiveBayes(trainDF[, 4:6], trainDF$acceptability)
 p.nb.fs  <- predict(m.nb.fs, testDF)
 confusionMatrix(p.nb.fs, testDF$acceptability)
-```
 
-### Logistic Regression - top 3 features
+# LOGISTIC REGRESSION - TOP 3 FEATURES
 
-```{r}
 m.mnl.fs  <- multinom(acceptability ~ persons + lug_boot + safety, data = trainDF)
 p.mnl.fs  <- predict(m.mnl.fs, testDF)
 confusionMatrix(p.mnl.fs, testDF$acceptability)
-```
 
----
-
+# ============================================================================
 # 3. Hyperparameter Tuning
+# ============================================================================
 
-## 3.1 Neural Network - decay parameter
+# 3.1 NEURAL NETWORK - DECAY PARAMETER
 
-```{r}
 ctl.tune <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 grid.nn  <- expand.grid(size = 5, decay = c(0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1))
 set.seed(123)
@@ -291,11 +244,9 @@ set.seed(123)
 m.nn.tuned <- train(trainDF[, -7], trainDF[, 7], method = "nnet",
                      trControl = ctl.tune, tuneGrid = grid.nn, trace = FALSE)
 plot(m.nn.tuned)
-```
 
-## 3.2 Decision Tree - trials parameter
+# 3.2 DECISION TREE - TRIALS PARAMETER
 
-```{r}
 ctl.tune  <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 grid.c50  <- expand.grid(model = "tree",
                           trials = c(1, 5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100),
@@ -305,18 +256,18 @@ set.seed(123)
 m.c50.tuned <- train(trainDF[, -7], trainDF[, 7], method = "C5.0",
                       trControl = ctl.tune, tuneGrid = grid.c50)
 plot(m.c50.tuned)
-```
 
----
-
+# ============================================================================
 # Part 3. Presentation of Specified Results
+# ============================================================================
+# (To be finalised in the lab session once exact required figures are confirmed.)
 
-*(To be finalised in the lab session once exact required figures are confirmed.)*
-
-## References
-
-- Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
-  *Journal of Statistical Software*, 28(5), pp. 1-26.
-- UCI Machine Learning Repository (1997) *Car Evaluation Data Set*. Available 
-  at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
-- Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: Springer-Verlag.
+# ============================================================================
+# References
+# ============================================================================
+# - Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
+#   Journal of Statistical Software, 28(5), pp. 1-26.
+# - UCI Machine Learning Repository (1997) Car Evaluation Data Set. Available 
+#   at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
+# - Wickham, H. (2016) ggplot2: Elegant Graphics for Data Analysis. 
+#   New York: Springer-Verlag.
