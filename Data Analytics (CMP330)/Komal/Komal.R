@@ -1,35 +1,27 @@
----
-title: "CMP330 Data Analytics - Assessment 2 (Pre-Assignment)"
-author: "Komalpreet Kaur [B01015647]"
-output:
-  html_notebook: default
-  pdf_document: default
----
+# ============================================================================
+# CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
+# ============================================================================
 
 # Introduction
+# This notebook classifies cars into four acceptability categories 
+# (`unacc`, `acc`, `good`, `vgood`) using six categorical attributes. Five 
+# machine learning approaches are trained and compared: decision trees, 
+# naive Bayes, logistic regression, SVM, and neural networks.
 
-This notebook classifies cars into four acceptability categories 
-(`unacc`, `acc`, `good`, `vgood`) using six categorical attributes. Five 
-machine learning approaches are trained and compared: decision trees, 
-naive Bayes, logistic regression, SVM, and neural networks.
-
----
-
+# ============================================================================
 # Section A: Exploratory Data Analysis
+# ============================================================================
 
-## A.1 Data import and preparation
+# A.1 Data import and preparation
 
-```{r}
 carsDataset <- read.csv("car.csv")
 carsDataset <- data.frame(lapply(carsDataset, factor))
 
 head(carsDataset)
 str(carsDataset)
-```
 
-## A.2 Frequency analysis
+# A.2 Frequency analysis
 
-```{r}
 # Class distribution of the target variable
 table(carsDataset$acceptability)
 
@@ -41,11 +33,9 @@ table(carsDataset$safety, carsDataset$acceptability)
 
 # Additional cross-tab: lug_boot against doors
 table(carsDataset$lug_boot, carsDataset$doors)
-```
 
-## A.3 Graphical summaries
+# A.3 Graphical summaries
 
-```{r}
 library(ggplot2)
 
 carsDataset$acceptability <- factor(carsDataset$acceptability,
@@ -73,11 +63,9 @@ ggplot(carsDataset, aes(x = acceptability, fill = maint)) +
   labs(title = "Acceptability Distribution by Maintenance Cost",
        x = "Acceptability", y = "Frequency") +
   theme_light()
-```
 
-## A.4 Mutual information analysis
+# A.4 Mutual information analysis
 
-```{r}
 library(infotheo)
 
 mutualInfoMatrix <- mutinformation(carsDataset)
@@ -85,9 +73,7 @@ mutualInfoMatrix
 
 # Mutual information of each predictor with the target column
 mutualInfoMatrix[-7, 7]
-```
 
-```{r}
 library(reshape2)
 
 mutualInfoLong <- melt(mutualInfoMatrix)
@@ -96,21 +82,17 @@ ggplot(mutualInfoLong, aes(x = Var1, y = Var2, fill = value)) +
   scale_fill_gradient(low = "#EFF3FF", high = "#08306B") +
   labs(title = "Mutual Information Matrix Heatmap", x = "", y = "", fill = "MI") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
-## A.5 Chi-squared independence tests
+# A.5 Chi-squared independence tests
 
-```{r}
 chisq.test(carsDataset$buying, carsDataset$acceptability)
 chisq.test(carsDataset$buying, carsDataset$maint)
 
 # Additional test: doors against persons
 chisq.test(carsDataset$doors, carsDataset$persons)
-```
 
-## A.6 Train-test partitioning
+# A.6 Train-test partitioning
 
-```{r}
 library(caTools)
 set.seed(123)
 split <- sample.split(carsDataset$acceptability, SplitRatio = 0.8)
@@ -121,74 +103,62 @@ summary(trainingSet$acceptability)
 summary(testingSet$acceptability)
 prop.table(table(trainingSet$acceptability))
 prop.table(table(testingSet$acceptability))
-```
 
----
-
+# ============================================================================
 # Section B: Machine Learning Model Development
+# ============================================================================
 
-### Decision Tree Classifier (C5.0)
+# DECISION TREE CLASSIFIER (C5.0)
 
-```{r}
 library(caret)
 library(C50)
 
 decisionTreeModel <- C5.0(trainingSet[-7], trainingSet$acceptability)
 decisionTreePred  <- predict(decisionTreeModel, testingSet)
 confusionMatrix(decisionTreePred, testingSet$acceptability)
-```
 
-### Naive Bayes Classifier
+# NAIVE BAYES CLASSIFIER
 
-```{r}
 library(e1071)
 set.seed(123)
 
 naiveBayesModel <- naiveBayes(trainingSet[, -7], trainingSet$acceptability)
 naiveBayesPred  <- predict(naiveBayesModel, testingSet)
 confusionMatrix(naiveBayesPred, testingSet$acceptability)
-```
 
-### Multinomial Logistic Regression
+# MULTINOMIAL LOGISTIC REGRESSION
 
-```{r}
 library(nnet)
 
 logisticRegModel <- multinom(acceptability ~ ., data = trainingSet)
 logisticRegPred  <- predict(logisticRegModel, testingSet)
 confusionMatrix(logisticRegPred, testingSet$acceptability)
-```
 
-### Support Vector Machine
+# SUPPORT VECTOR MACHINE
 
-```{r}
 library(kernlab)
 
 svmModelKsvm <- ksvm(acceptability ~ ., data = trainingSet, kernel = "vanilladot")
 svmPredKsvm  <- predict(svmModelKsvm, testingSet)
 confusionMatrix(svmPredKsvm, testingSet$acceptability)
-```
 
-```{r}
 svmModelE1071 <- svm(acceptability ~ ., data = trainingSet)
 svmPredE1071  <- predict(svmModelE1071, testingSet)
 confusionMatrix(svmPredE1071, testingSet$acceptability)
-```
 
-### Neural Network
+# NEURAL NETWORK
 
-```{r}
 # Reference: https://www.geeksforgeeks.org/r-language/neural-networks-using-the-r-nnet-package/
 neuralNetModel <- nnet(acceptability ~ ., data = trainingSet, size = 5)
 neuralNetPred  <- predict(neuralNetModel, testingSet, type = "class")
 confusionMatrix(factor(neuralNetPred), testingSet$acceptability)
-```
 
-## Cross-Validated Models
+# ============================================================================
+# Cross-Validated Models
+# ============================================================================
 
-### Decision Tree with Cross-Validation
+# DECISION TREE WITH CROSS-VALIDATION
 
-```{r}
 crossValCtrl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -197,11 +167,9 @@ decisionTreeCvModel <- train(trainingSet[, -7], trainingSet[, 7], method = "C5.0
 decisionTreeCvModel
 decisionTreeCvPred <- predict(decisionTreeCvModel, testingSet)
 confusionMatrix(decisionTreeCvPred, testingSet$acceptability)
-```
 
-### Naive Bayes with Cross-Validation
+# NAIVE BAYES WITH CROSS-VALIDATION
 
-```{r}
 crossValCtrl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -210,11 +178,9 @@ naiveBayesCvModel <- train(trainingSet[, -7], trainingSet[, 7], method = "nb",
 naiveBayesCvModel
 naiveBayesCvPred <- predict(naiveBayesCvModel, testingSet)
 confusionMatrix(naiveBayesCvPred, testingSet$acceptability)
-```
 
-### Logistic Regression with Cross-Validation
+# LOGISTIC REGRESSION WITH CROSS-VALIDATION
 
-```{r}
 crossValCtrl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -223,11 +189,9 @@ logisticRegCvModel <- train(trainingSet[, -7], trainingSet[, 7], method = "multi
 logisticRegCvModel
 logisticRegCvPred <- predict(logisticRegCvModel, testingSet)
 confusionMatrix(logisticRegCvPred, testingSet$acceptability)
-```
 
-### Neural Network with Cross-Validation
+# NEURAL NETWORK WITH CROSS-VALIDATION
 
-```{r}
 crossValCtrl <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -236,60 +200,50 @@ neuralNetCvModel <- train(trainingSet[, -7], trainingSet[, 7], method = "nnet",
 neuralNetCvModel
 neuralNetCvPred <- predict(neuralNetCvModel, testingSet)
 confusionMatrix(neuralNetCvPred, testingSet$acceptability)
-```
 
-### SVM with Cross-Validation
+# SVM WITH CROSS-VALIDATION
 
-```{r}
 set.seed(123)
 svmCvModel <- ksvm(acceptability ~ ., data = trainingSet, kernel = "vanilladot", cross = 10)
 svmCvModel
 svmCvPred <- predict(svmCvModel, testingSet)
 confusionMatrix(svmCvPred, testingSet$acceptability)
-```
 
-## Feature Selection via Mutual Information
+# ============================================================================
+# Feature Selection via Mutual Information
+# ============================================================================
 
-```{r}
 mutualInfoTrain <- mutinformation(trainingSet)
 mutualInfoTrain
 mutualInfoTrain[7, -7]
-```
 
-Based on the scores above, `persons`, `lug_boot`, and `safety` are selected 
-as the top three predictive features.
+# Based on the scores above, `persons`, `lug_boot`, and `safety` are selected 
+# as the top three predictive features.
 
-### Decision Tree with Selected Features
+# DECISION TREE WITH SELECTED FEATURES
 
-```{r}
 decisionTreeFsModel <- C5.0(trainingSet[, 4:6], trainingSet$acceptability)
 decisionTreeFsPred  <- predict(decisionTreeFsModel, testingSet)
 confusionMatrix(decisionTreeFsPred, testingSet$acceptability)
-```
 
-### Naive Bayes with Selected Features
+# NAIVE BAYES WITH SELECTED FEATURES
 
-```{r}
 naiveBayesFsModel <- naiveBayes(trainingSet[, 4:6], trainingSet$acceptability)
 naiveBayesFsPred  <- predict(naiveBayesFsModel, testingSet)
 confusionMatrix(naiveBayesFsPred, testingSet$acceptability)
-```
 
-### Logistic Regression with Selected Features
+# LOGISTIC REGRESSION WITH SELECTED FEATURES
 
-```{r}
 logisticRegFsModel <- multinom(acceptability ~ persons + lug_boot + safety, data = trainingSet)
 logisticRegFsPred  <- predict(logisticRegFsModel, testingSet)
 confusionMatrix(logisticRegFsPred, testingSet$acceptability)
-```
 
----
-
+# ============================================================================
 # Section C: Hyperparameter Tuning
+# ============================================================================
 
-## Neural Network Decay Tuning
+# NEURAL NETWORK DECAY TUNING
 
-```{r}
 tuningCtrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 neuralNetGrid <- expand.grid(size = 5, decay = c(0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1))
 set.seed(123)
@@ -297,11 +251,9 @@ set.seed(123)
 neuralNetTuned <- train(trainingSet[, -7], trainingSet[, 7], method = "nnet",
                          trControl = tuningCtrl, tuneGrid = neuralNetGrid, trace = FALSE)
 plot(neuralNetTuned)
-```
 
-## Decision Tree Trials Tuning
+# DECISION TREE TRIALS TUNING
 
-```{r}
 tuningCtrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 decisionTreeGrid <- expand.grid(model = "tree",
                                  trials = c(1, 5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100),
@@ -311,23 +263,18 @@ set.seed(123)
 decisionTreeTuned <- train(trainingSet[, -7], trainingSet[, 7], method = "C5.0",
                             trControl = tuningCtrl, tuneGrid = decisionTreeGrid)
 plot(decisionTreeTuned)
-```
 
----
-
-```{r}
-
-```
-
-
+# ============================================================================
 # Part 3. Presentation of Specified Results
+# ============================================================================
+# (To be finalised in the lab session once exact required figures are confirmed.)
 
-*(To be finalised in the lab session once exact required figures are confirmed.)*
-
-## References
-
-- Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
-  *Journal of Statistical Software*, 28(5), pp. 1-26.
-- UCI Machine Learning Repository (1997) *Car Evaluation Data Set*. Available 
-  at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
-- Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: Springer-Verlag.
+# ============================================================================
+# References
+# ============================================================================
+# - Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
+#   Journal of Statistical Software, 28(5), pp. 1-26.
+# - UCI Machine Learning Repository (1997) Car Evaluation Data Set. Available 
+#   at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
+# - Wickham, H. (2016) ggplot2: Elegant Graphics for Data Analysis. 
+#   New York: Springer-Verlag.
