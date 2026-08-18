@@ -1,6 +1,6 @@
 # ============================================================================
 # CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
-# Author: Habibur Rahman [B01009639]
+# Author:
 # ============================================================================
 
 # What am I trying to do here?

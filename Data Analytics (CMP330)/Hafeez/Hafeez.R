@@ -1,6 +1,6 @@
 # ============================================================================
 # CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
-# Author: Syed Abdul Hafeez - B01012379
+# Author: 
 # ============================================================================
 
 # What this notebook does

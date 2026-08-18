@@ -1,44 +1,35 @@
----
-title: "CMP330 Data Analytics - Assessment 2 (Pre-Assignment)"
-author: "Md Jahirul Islam -> B00999362"
-output:
-  html_notebook: default
-  pdf_document: default
----
+# ============================================================================
+# CMP330 Data Analytics - Assessment 2 (Pre-Assignment)
+# Author: 
+# ============================================================================
 
 # Objective
+# The task is to predict a car's acceptability (`unacc`, `acc`, `good`, 
+# `vgood`) from six attributes describing the car. I'll go through the usual 
+# EDA steps first, then compare five ML algorithms, and finally try to squeeze 
+# out some extra accuracy through feature selection and hyperparameter tuning.
 
-The task is to predict a car's acceptability (`unacc`, `acc`, `good`, 
-`vgood`) from six attributes describing the car. I'll go through the usual 
-EDA steps first, then compare five ML algorithms, and finally try to squeeze 
-out some extra accuracy through feature selection and hyperparameter tuning.
-
----
-
+# ============================================================================
 # Part 1: Exploring and Preparing the Data
+# ============================================================================
 
-## 1.1 Reading the file in
+# 1.1 Reading the file in
+# The target and all predictors are categorical, so everything gets converted 
+# to a factor right after loading - otherwise R will treat some columns as 
+# plain character strings and a lot of the functions below won't behave 
+# properly.
 
-The target and all predictors are categorical, so everything gets converted 
-to a factor right after loading - otherwise R will treat some columns as 
-plain character strings and a lot of the functions below won't behave 
-properly.
-
-```{r}
 eval_data <- read.csv("car.csv")
 eval_data <- data.frame(lapply(eval_data, factor))
 
 head(eval_data)
 str(eval_data)
-```
 
-## 1.2 Basic counts
+# 1.2 Basic counts
+# Just wanted to get a feel for the data before doing anything fancy - how 
+# balanced are the classes, and does anything jump out from a couple of 
+# cross-tabs.
 
-Just wanted to get a feel for the data before doing anything fancy - how 
-balanced are the classes, and does anything jump out from a couple of 
-cross-tabs.
-
-```{r}
 # class balance - turns out "unacc" dominates, which makes sense since most
 # combinations of features probably don't produce a "great" car
 table(eval_data$acceptability)
@@ -50,14 +41,11 @@ table(eval_data$safety, eval_data$acceptability)
 
 # and whether 2-seaters get penalised regardless of everything else
 table(eval_data$persons, eval_data$acceptability)
-```
 
-## 1.3 Some plots
+# 1.3 Some plots
+# I went with a few different chart types here instead of just bar charts, to 
+# get a couple of different angles on the same data.
 
-I went with a few different chart types here instead of just bar charts, to 
-get a couple of different angles on the same data.
-
-```{r}
 library(ggplot2)
 
 eval_data$acceptability <- factor(eval_data$acceptability,
@@ -86,15 +74,12 @@ ggplot(eval_data, aes(x = safety, fill = safety)) +
   labs(title = "Safety Levels Split Out by Acceptability Class", x = "Safety", y = "Count") +
   theme_minimal() +
   theme(legend.position = "none")
-```
 
-## 1.4 Mutual information (instead of correlation)
+# 1.4 Mutual information (instead of correlation)
+# None of these variables are numeric so normal correlation won't work. 
+# Mutual information is the categorical equivalent - roughly, how much 
+# knowing one variable narrows down what the other one could be.
 
-None of these variables are numeric so normal correlation won't work. 
-Mutual information is the categorical equivalent - roughly, how much 
-knowing one variable narrows down what the other one could be.
-
-```{r}
 library(infotheo)
 
 mi_mat <- mutinformation(eval_data)
@@ -103,14 +88,12 @@ mi_mat
 # just the row for the target, sorted so the strongest predictors are
 # obvious at a glance
 sort(mi_mat[-7, 7], decreasing = TRUE)
-```
 
-I used `corrplot` here rather than a plain heatmap - it's normally built for 
-correlation matrices but works fine on any square numeric matrix as long as 
-`is.corr = FALSE` is set, and I think it reads a bit more clearly than a 
-ggplot tile plot for this many variables.
+# I used `corrplot` here rather than a plain heatmap - it's normally built for 
+# correlation matrices but works fine on any square numeric matrix as long as 
+# `is.corr = FALSE` is set, and I think it reads a bit more clearly than a 
+# ggplot tile plot for this many variables.
 
-```{r}
 library(corrplot)
 
 corrplot(mi_mat, method = "color", is.corr = FALSE,
@@ -118,25 +101,20 @@ corrplot(mi_mat, method = "color", is.corr = FALSE,
          addCoef.col = "black", number.cex = 0.7,
          tl.col = "black", tl.srt = 45,
          title = "Mutual Information Between Variables", mar = c(0, 0, 2, 0))
-```
 
-## 1.5 Chi-squared tests
+# 1.5 Chi-squared tests
 
-```{r}
 chisq.test(eval_data$buying, eval_data$acceptability)
 chisq.test(eval_data$buying, eval_data$maint)
 
 # checking persons vs acceptability too, since the plots above suggested a
 # fairly strong relationship there
 chisq.test(eval_data$persons, eval_data$acceptability)
-```
 
-## 1.6 Train/test split
+# 1.6 Train/test split
+# This bit is given in the assignment brief and needs to stay exactly as-is 
+# (same seed, same split ratio) so everyone's results are comparable.
 
-This bit is given in the assignment brief and needs to stay exactly as-is 
-(same seed, same split ratio) so everyone's results are comparable.
-
-```{r}
 library(caTools)
 set.seed(123)
 split <- sample.split(eval_data$acceptability, SplitRatio = 0.8)
@@ -147,81 +125,68 @@ summary(part_train$acceptability)
 summary(part_test$acceptability)
 prop.table(table(part_train$acceptability))
 prop.table(table(part_test$acceptability))
-```
 
----
-
+# ============================================================================
 # Part 2a: Building the Models
+# ============================================================================
 
-### Decision Tree (C5.0)
+# DECISION TREE (C5.0)
 
-```{r}
 library(caret)
 library(C50)
 
 cart_fit  <- C5.0(part_train[-7], part_train$acceptability)
 cart_pred <- predict(cart_fit, part_test)
 confusionMatrix(cart_pred, part_test$acceptability)
-```
 
-### Naive Bayes
+# NAIVE BAYES
 
-```{r}
 library(e1071)
 set.seed(123)
 
 bayes_fit  <- naiveBayes(part_train[, -7], part_train$acceptability)
 bayes_pred <- predict(bayes_fit, part_test)
 confusionMatrix(bayes_pred, part_test$acceptability)
-```
 
-### Multinomial Logistic Regression
+# MULTINOMIAL LOGISTIC REGRESSION
 
-```{r}
 library(nnet)
 
 logit_fit  <- multinom(acceptability ~ ., data = part_train)
 logit_pred <- predict(logit_fit, part_test)
 confusionMatrix(logit_pred, part_test$acceptability)
-```
 
-### SVM
+# SUPPORT VECTOR MACHINE (SVM)
 
-```{r}
 library(kernlab)
 
 # linear kernel first
 svmLin_fit  <- ksvm(acceptability ~ ., data = part_train, kernel = "vanilladot")
 svmLin_pred <- predict(svmLin_fit, part_test)
 confusionMatrix(svmLin_pred, part_test$acceptability)
-```
 
-```{r}
 # and the e1071 default (radial kernel) for comparison - curious if the
 # non-linear boundary does any better here
 svmRad_fit  <- svm(acceptability ~ ., data = part_train)
 svmRad_pred <- predict(svmRad_fit, part_test)
 confusionMatrix(svmRad_pred, part_test$acceptability)
-```
 
-### Neural Network
+# NEURAL NETWORK
 
-```{r}
 # following the nnet approach from GeeksforGeeks:
 # https://www.geeksforgeeks.org/r-language/neural-networks-using-the-r-nnet-package/
 mlp_fit  <- nnet(acceptability ~ ., data = part_train, size = 5)
 mlp_pred <- predict(mlp_fit, part_test, type = "class")
 confusionMatrix(factor(mlp_pred), part_test$acceptability)
-```
 
-## Cross-validated versions
+# ============================================================================
+# Cross-validated versions
+# ============================================================================
+# Same five algorithms, but this time letting `caret::train()` handle 10-fold 
+# CV so the accuracy estimate isn't just dependent on one lucky/unlucky split.
 
-Same five algorithms, but this time letting `caret::train()` handle 10-fold 
-CV so the accuracy estimate isn't just dependent on one lucky/unlucky split.
+# DECISION TREE - CV
 
-### Decision Tree - CV
-
-```{r}
 cv_setup <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -229,11 +194,9 @@ cart_cv_fit  <- train(part_train[, -7], part_train[, 7], method = "C5.0", trCont
 cart_cv_fit
 cart_cv_pred <- predict(cart_cv_fit, part_test)
 confusionMatrix(cart_cv_pred, part_test$acceptability)
-```
 
-### Naive Bayes - CV
+# NAIVE BAYES - CV
 
-```{r}
 cv_setup <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -241,11 +204,9 @@ bayes_cv_fit  <- train(part_train[, -7], part_train[, 7], method = "nb", trContr
 bayes_cv_fit
 bayes_cv_pred <- predict(bayes_cv_fit, part_test)
 confusionMatrix(bayes_cv_pred, part_test$acceptability)
-```
 
-### Logistic Regression - CV
+# LOGISTIC REGRESSION - CV
 
-```{r}
 cv_setup <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -254,11 +215,9 @@ logit_cv_fit  <- train(part_train[, -7], part_train[, 7], method = "multinom",
 logit_cv_fit
 logit_cv_pred <- predict(logit_cv_fit, part_test)
 confusionMatrix(logit_cv_pred, part_test$acceptability)
-```
 
-### Neural Network - CV
+# NEURAL NETWORK - CV
 
-```{r}
 cv_setup <- trainControl(method = "cv", number = 10)
 set.seed(123)
 
@@ -267,33 +226,28 @@ mlp_cv_fit  <- train(part_train[, -7], part_train[, 7], method = "nnet",
 mlp_cv_fit
 mlp_cv_pred <- predict(mlp_cv_fit, part_test)
 confusionMatrix(mlp_cv_pred, part_test$acceptability)
-```
 
-### SVM - CV
+# SVM - CV
 
-```{r}
 set.seed(123)
 svm_cv_fit  <- ksvm(acceptability ~ ., data = part_train, kernel = "vanilladot", cross = 10)
 svm_cv_fit
 svm_cv_pred <- predict(svm_cv_fit, part_test)
 confusionMatrix(svm_cv_pred, part_test$acceptability)
-```
 
-## Feature selection - trying a few different values of x
+# ============================================================================
+# Feature selection - trying a few different values of x
+# ============================================================================
+# Rather than just picking the top 3 features and stopping there, I ranked 
+# all six by their mutual information with the target and then looped 
+# through the top 2, top 3, top 4 and top 5 to see where accuracy actually 
+# levels off. Decision tree is used as the test algorithm here since it 
+# trains quickly.
 
-Rather than just picking the top 3 features and stopping there, I ranked 
-all six by their mutual information with the target and then looped 
-through the top 2, top 3, top 4 and top 5 to see where accuracy actually 
-levels off. Decision tree is used as the test algorithm here since it 
-trains quickly.
-
-```{r}
 mi_train <- mutinformation(part_train)
 ranked_features <- names(sort(mi_train[7, -7], decreasing = TRUE))
 ranked_features  # feature names, best predictor first
-```
 
-```{r}
 # loop over a few candidate values of x and record accuracy for each
 feature_counts <- c(2, 3, 4, 5)
 fs_results <- data.frame(top_x = integer(), accuracy = numeric())
@@ -309,9 +263,7 @@ for (x in feature_counts) {
 }
 
 fs_results
-```
 
-```{r}
 # quick plot so it's obvious where extra features stop helping
 ggplot(fs_results, aes(x = top_x, y = accuracy)) +
   geom_line(color = "#457B9D", linewidth = 1) +
@@ -319,40 +271,33 @@ ggplot(fs_results, aes(x = top_x, y = accuracy)) +
   labs(title = "Decision Tree Accuracy vs Number of Selected Features",
        x = "Number of top features used (x)", y = "Accuracy on test set") +
   theme_minimal()
-```
 
-Repeating the same idea with Naive Bayes and multinomial logistic 
-regression, just using top 3 as a representative case (matching what the 
-brief's example used) rather than re-running the full loop for every 
-algorithm:
+# Repeating the same idea with Naive Bayes and multinomial logistic 
+# regression, just using top 3 as a representative case (matching what the 
+# brief's example used) rather than re-running the full loop for every 
+# algorithm:
 
-```{r}
 top3_cols <- ranked_features[1:3]
 
 bayes_fs_fit  <- naiveBayes(part_train[, top3_cols], part_train$acceptability)
 bayes_fs_pred <- predict(bayes_fs_fit, part_test)
 confusionMatrix(bayes_fs_pred, part_test$acceptability)
-```
 
-```{r}
 # multinom needs a formula, so I build one dynamically from the chosen columns
 fs_formula <- as.formula(paste("acceptability ~", paste(top3_cols, collapse = " + ")))
 logit_fs_fit  <- multinom(fs_formula, data = part_train)
 logit_fs_pred <- predict(logit_fs_fit, part_test)
 confusionMatrix(logit_fs_pred, part_test$acceptability)
-```
 
----
-
+# ============================================================================
 # Part 2b: Hyperparameter Tuning
+# ============================================================================
 
-## Neural network - decay
+# NEURAL NETWORK - DECAY
+# I used a wider spread of decay values than a simple 0-to-0.1 sweep, 
+# including a couple of larger values, to check whether accuracy keeps 
+# improving or starts dropping again once regularisation gets too strong.
 
-I used a wider spread of decay values than a simple 0-to-0.1 sweep, 
-including a couple of larger values, to check whether accuracy keeps 
-improving or starts dropping again once regularisation gets too strong.
-
-```{r}
 tune_setup <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 mlp_grid <- expand.grid(size = c(3, 5, 7),
                          decay = c(0, 0.0005, 0.001, 0.01, 0.05, 0.1, 0.3))
@@ -361,14 +306,11 @@ set.seed(123)
 mlp_tuned <- train(part_train[, -7], part_train[, 7], method = "nnet",
                     trControl = tune_setup, tuneGrid = mlp_grid, trace = FALSE)
 plot(mlp_tuned)
-```
 
-## Decision tree - trials
+# DECISION TREE - TRIALS
+# Also widened this grid a bit compared to the lab example, going up to 150 
+# boosting trials to see where the accuracy curve actually flattens out.
 
-Also widened this grid a bit compared to the lab example, going up to 150 
-boosting trials to see where the accuracy curve actually flattens out.
-
-```{r}
 tune_setup <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 cart_grid <- expand.grid(model = "tree",
                           trials = c(1, 5, 15, 25, 40, 60, 80, 100),
@@ -378,20 +320,22 @@ set.seed(123)
 cart_tuned <- train(part_train[, -7], part_train[, 7], method = "C5.0",
                      trControl = tune_setup, tuneGrid = cart_grid)
 plot(cart_tuned)
-```
 
----
-
+# ============================================================================
 # Part 3. Presentation of Specified Results
+# ============================================================================
+# (To be finalised in the lab session once the exact figures required are 
+# confirmed - the feature-selection accuracy-vs-x plot above and the two 
+# tuning plots are strong candidates to include here.)
 
-*(To be finalised in the lab session once the exact figures required are confirmed - the feature-selection accuracy-vs-x plot above and the two tuning plots are strong candidates to include here.)*
-
-## References
-
-- Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
-  *Journal of Statistical Software*, 28(5), pp. 1-26.
-- Wei, T. and Simko, V. (2021) *corrplot: Visualization of a Correlation 
-  Matrix*. R package.
-- UCI Machine Learning Repository (1997) *Car Evaluation Data Set*. Available 
-  at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
-- Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*. New York: Springer-Verlag.
+# ============================================================================
+# References
+# ============================================================================
+# - Kuhn, M. (2008) 'Building predictive models in R using the caret package', 
+#   Journal of Statistical Software, 28(5), pp. 1-26.
+# - Wei, T. and Simko, V. (2021) corrplot: Visualization of a Correlation 
+#   Matrix. R package.
+# - UCI Machine Learning Repository (1997) Car Evaluation Data Set. Available 
+#   at: https://archive.ics.uci.edu/dataset/19/car+evaluation (Accessed: [add date]).
+# - Wickham, H. (2016) ggplot2: Elegant Graphics for Data Analysis. 
+#   New York: Springer-Verlag.

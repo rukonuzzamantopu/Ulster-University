@@ -1,6 +1,6 @@
 ---
 title: "CMP330 Data Analytics - Assessment 2 (Pre-Assignment)"
-author: Habibur Rahman [B01009639]
+author: 
 output:
   html_notebook: default
   pdf_document: default
