@@ -1,17 +1,14 @@
 # Ulster University — Academic Project Repository
 
-
 **A structured, version-controlled academic workspace for Ulster University coursework, software development modules, and collaborative project materials.**
 
 [Overview](#-overview) · [Structure](#-repository-structure) · [Modules](#-modules) · [Technologies](#-technologies) · [Setup](#-getting-started) · [Contributing](#-contributing)
-
-</div>
 
 ---
 
 ## 📌 Overview
 
-This repository serves as a centralised, version-controlled hub for all academic work undertaken at **Ulster University**. It covers multiple computing modules spanning software engineering, database management, Python programming, and web development.
+This repository serves as a centralised, version-controlled hub for all academic work undertaken at **Ulster University**. It covers multiple computing modules spanning software engineering, computer networking, data analytics, database management, Python programming, and web/client-side development.
 
 The repository is structured to ensure clear separation between modules while allowing shared tools and references to remain accessible. It supports:
 
@@ -20,9 +17,9 @@ The repository is structured to ensure clear separation between modules while al
 - ✅ Collaborative workflows for group assignments and paired programming
 - ✅ A reference base for future academic and professional projects
 
-> **Institution:** Ulster University, Northern Ireland, UK  
-> **Repository Owner:** [rukonuzzamantopu](https://github.com/rukonuzzamantopu)  
-> **Language Breakdown:** Python (29.6%) · TeX (20.3%) · Jupyter Notebook (17.1%) · HTML (12.2%) · T-SQL (10.6%) · CSS (6.4%) · JavaScript (3.8%)
+> **Institution:** Ulster University, London
+> **Repository Owner:** [rukonuzzamantopu](https://github.com/rukonuzzamantopu)
+> **Language Breakdown:** Python · R · TeX · Jupyter Notebook · HTML · T-SQL · CSS · JavaScript
 
 ---
 
@@ -31,32 +28,48 @@ The repository is structured to ensure clear separation between modules while al
 ```
 Ulster-University/
 │
+├── 📁 CMP301 Computer Networking/
+│   ├── Networking coursework, configuration files, and lab reports
+│   └── PowerPoint slides (.pptx)
+│
+├── 📁 COM161 Coding Project (Python)/
+│   └── komal/
+│       ├── Python scripts (.py)
+│       └── Jupyter Notebooks (.ipynb)
+│
+├── 📁 COM398 Systems Security/
+│   └── Systems security coursework and assignment materials
+│
+├── 📁 COM410 Programming in Practice/
+│   └── Programming in Practice coursework and projects
+│
 ├── 📁 COM435 Software Product and Process Management/
 │   ├── Reports and documentation (LaTeX / PDF)
 │   ├── Process management artefacts (plans, diagrams, reviews)
 │   └── Assignment submissions and coursework materials
 │
-├── 📁 Data Base/
+├── 📁 Client-Side Development/
+│   ├── HTML pages
+│   ├── CSS stylesheets
+│   ├── JavaScript files
+│   └── In-progress front-end coursework projects
+│
+├── 📁 Data Analytics (CMP330)/
+│   ├── R scripts (.r)
+│   ├── R Markdown files (.rmd)
+│   └── Rendered HTML reports (.html)
+│
+├── 📁 INTRODUCTION TO DATABASES/
 │   ├── SQL and T-SQL scripts (queries, stored procedures)
 │   ├── Database schema designs and ER diagrams
 │   └── Assignment-related database files
-│
-├── 📁 Python/
-│   └── komal/
-│       ├── Python scripts (.py)
-│       └── Jupyter Notebooks (.ipynb)
-│
-├── 📁 web/
-│   ├── HTML pages
-│   ├── CSS stylesheets
-│   └── JavaScript files
 │
 ├── 📦 coffe-shop-webpage/          ← Git Submodule
 │   └── (links to: rukonuzzamantopu/coffe-shop-webpage)
 │       A standalone responsive coffee shop website project
 │
 ├── .gitmodules                     ← Submodule configuration
-└── test.txt
+└── .gitignore
 ```
 
 > **Note:** The `coffe-shop-webpage` directory is a **Git submodule** — a separate linked repository. Use `--recurse-submodules` when cloning to include it (see [Getting Started](#-getting-started)).
@@ -65,65 +78,93 @@ Ulster-University/
 
 ## 📘 Modules
 
+### CMP301 — Computer Networking
+
+| Item           | Detail                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------- |
+| **Module Code** | CMP301                                                                                      |
+| **Key Topics**  | Network fundamentals, protocols (TCP/IP), subnetting, routing & switching, network security |
+| **Artefacts**   | Lab reports, configuration files, coursework write-ups, PowerPoint slides (.pptx)           |
+
+### Data Analytics (CMP330)
+
+| Item           | Detail                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| **Module Code** | CMP330                                                                                   |
+| **Key Topics**  | Data cleaning & preparation, exploratory analysis, statistical methods, data visualisation |
+| **Tools Used**  | R, R Markdown                                                                            |
+| **Artefacts**   | R scripts (`.r`), R Markdown files (`.rmd`), rendered HTML reports (`.html`)             |
+
+### Client-Side Development
+
+| Item           | Detail                                                                                 |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| **Focus Area** | Frontend web development (currently in progress)                                        |
+| **Key Topics** | HTML5 structure, CSS3 styling and layouts, JavaScript interactivity, responsive design  |
+| **Tools Used** | HTML, CSS, JavaScript                                                                    |
+| **Artefacts**  | Web pages, UI components, the coffee shop project (submodule)                           |
+
 ### COM435 — Software Product and Process Management
 
-| Item | Detail |
-|---|---|
-| **Module Code** | COM435 |
-| **Module Name** | Software Product and Process Management |
-| **Level** | Postgraduate / Undergraduate (Level 7/6) |
-| **Key Topics** | Software Development Life Cycle (SDLC), Agile & Scrum methodologies, project planning, risk management, quality assurance, process documentation, team collaboration |
-| **Artefacts** | Reports, plans, process models, reviews |
-| **Format** | LaTeX (TeX) for academic reports; PDF outputs |
+| Item            | Detail                                                                                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Module Code** | COM435                                                                                                                                                                  |
+| **Key Topics**  | Software Development Life Cycle (SDLC), Agile & Scrum methodologies, project planning, risk management, quality assurance, process documentation, team collaboration |
+| **Artefacts**   | Reports, plans, process models, reviews                                                                                                                                |
+| **Format**      | LaTeX (TeX) for academic reports; PDF outputs                                                                                                                          |
 
----
+### COM398 — Systems Security
 
-### Database Management
+| Item           | Detail                                                            |
+| -------------- | -------------------------------------------------------------------- |
+| **Module Code** | COM398                                                               |
+| **Key Topics**  | Security fundamentals, threat analysis, secure systems design       |
+| **Artefacts**   | Coursework reports and assignment submissions                       |
 
-| Item | Detail |
-|---|---|
-| **Focus Area** | Relational Database Design & SQL Development |
-| **Key Topics** | Entity-Relationship (ER) modelling, schema normalisation, T-SQL queries, stored procedures, data manipulation and retrieval |
-| **Tools Used** | Microsoft SQL Server / T-SQL |
-| **Artefacts** | SQL scripts, schema designs, ER diagrams, query assignments |
+### COM410 — Programming in Practice
 
----
+| Item           | Detail                                                          |
+| -------------- | ------------------------------------------------------------------ |
+| **Module Code** | COM410                                                             |
+| **Key Topics**  | Applied programming projects, coding standards, software practice |
+| **Artefacts**   | Source code, coursework write-ups                                 |
 
-### Python Programming
+### Introduction to Databases
 
-| Item | Detail |
-|---|---|
-| **Focus Area** | Python scripting and data exploration |
+| Item           | Detail                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Focus Area** | Relational Database Design & SQL Development                                                                                  |
+| **Key Topics** | Entity-Relationship (ER) modelling, schema normalisation, T-SQL queries, stored procedures, data manipulation and retrieval    |
+| **Tools Used** | Microsoft SQL Server / T-SQL                                                                                                   |
+| **Artefacts**  | SQL scripts, schema designs, ER diagrams, query assignments                                                                    |
+
+### COM161 — Coding Project (Python)
+
+| Item           | Detail                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------- |
+| **Focus Area** | Python scripting and data exploration                                                         |
 | **Key Topics** | Core Python programming, data structures, file handling, data analysis with Jupyter Notebooks |
-| **Tools Used** | Python 3.x, Jupyter Notebook |
-| **Artefacts** | `.py` scripts, `.ipynb` notebooks |
-
----
-
-### Web Development
-
-| Item | Detail |
-|---|---|
-| **Focus Area** | Frontend Web Development |
-| **Key Topics** | HTML5 structure, CSS3 styling and layouts, JavaScript interactivity, responsive design |
-| **Tools Used** | HTML, CSS, JavaScript |
-| **Artefacts** | Web pages, UI components, the coffee shop project (submodule) |
+| **Tools Used** | Python 3.x, Jupyter Notebook                                                                  |
+| **Artefacts**  | `.py` scripts, `.ipynb` notebooks (in `komal/`)                                               |
 
 ---
 
 ## 🛠️ Technologies
 
-| Category | Technology / Tool | Version / Notes |
-|---|---|---|
-| Programming Language | Python | 3.x |
-| Data Exploration | Jupyter Notebook | via Anaconda or pip |
-| Database | Microsoft SQL Server / T-SQL | SSMS recommended |
-| Web — Markup | HTML5 | Semantic structure |
-| Web — Styling | CSS3 | Responsive design |
-| Web — Scripting | JavaScript | Vanilla JS |
-| Academic Writing | LaTeX (TeX) | Overleaf or local TeX Live |
-| Version Control | Git | 2.x |
-| Hosting | GitHub | github.com |
+| Category             | Technology / Tool            | Version / Notes            |
+| --------------------- | ----------------------------- | --------------------------- |
+| Programming Language  | Python                        | 3.x                         |
+| Data Exploration      | Jupyter Notebook               | via Anaconda or pip         |
+| Statistical Computing | R / R Markdown                 | RStudio recommended         |
+| Database               | Microsoft SQL Server / T-SQL   | SSMS recommended            |
+| Networking             | Network protocols & tools      | CMP301 coursework           |
+| Presentations           | Microsoft PowerPoint           | .pptx slide decks           |
+| Web — Markup           | HTML5                          | Semantic structure          |
+| Web — Styling          | CSS3                           | Responsive design           |
+| Web — Scripting        | JavaScript                     | Vanilla JS                  |
+| Academic Writing       | LaTeX (TeX)                    | Overleaf or local TeX Live  |
+| Version Control        | Git                            | 2.x                          |
+| Hosting                 | GitHub                         | github.com                   |
 
 ---
 
@@ -133,60 +174,56 @@ Ulster-University/
 
 Ensure the following are installed on your machine before cloning:
 
-| Tool | Download |
-|---|---|
-| Git | https://git-scm.com/downloads |
-| Python 3.x | https://www.python.org/downloads/ |
-| Jupyter Notebook | `pip install notebook` or [Anaconda](https://www.anaconda.com/) |
-| SQL Server / SSMS | https://aka.ms/ssmsfullsetup |
-| VS Code (recommended) | https://code.visualstudio.com/ |
-| TeX Live (optional) | https://www.tug.org/texlive/ |
-
----
+| Tool                  | Download                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| Git                    | <https://git-scm.com/downloads>                                    |
+| Python 3.x             | <https://www.python.org/downloads/>                                |
+| Jupyter Notebook       | `pip install notebook` or [Anaconda](https://www.anaconda.com/)    |
+| SQL Server / SSMS      | <https://aka.ms/ssmsfullsetup>                                     |
+| R / RStudio             | <https://posit.co/download/rstudio-desktop/>                       |
+| VS Code (recommended)  | <https://code.visualstudio.com/>                                   |
+| TeX Live (optional)    | <https://www.tug.org/texlive/>                                     |
 
 ### 1. Clone the Repository
 
 To clone the repository **including the submodule** (`coffe-shop-webpage`):
 
-```bash
+```
 git clone --recurse-submodules https://github.com/rukonuzzamantopu/Ulster-University.git
 ```
 
 If you have already cloned without the flag, initialise the submodule manually:
 
-```bash
+```
 cd Ulster-University
 git submodule update --init --recursive
 ```
-
----
 
 ### 2. Explore a Module
 
 Navigate into any module folder directly:
 
-```bash
-# Example — Database module
-cd "Data Base"
-
-# Example — COM435 module
-cd "COM435 Software Product and Process Management"
 ```
+# Example — Computer Networking module
+cd "CMP301 Computer Networking"
 
----
+# Example — Data Analytics module
+cd "Data Analytics (CMP330)"
+
+# Example — Client-Side Development module
+cd "Client-Side Development"
+```
 
 ### 3. Run Python Scripts
 
-```bash
-cd Python/komal
+```
+cd "COM161 Coding Project (Python)/komal"
 python your_script_name.py
 ```
 
----
-
 ### 4. Launch Jupyter Notebooks
 
-```bash
+```
 # Install if not already available
 pip install notebook
 
@@ -196,41 +233,37 @@ jupyter notebook
 
 Then open the `.ipynb` file of your choice from the browser interface.
 
----
+### 5. Run R Scripts / R Markdown
 
-### 5. Run SQL Scripts
+Open **RStudio**, then:
 
-Open **SQL Server Management Studio (SSMS)** or **Azure Data Studio**, connect to your local SQL Server instance, and open any `.sql` file from the `Data Base/` folder to execute queries.
-
----
-
-### 6. View the Web Project
-
-Open any `.html` file from the `web/` or `coffe-shop-webpage/` folder directly in your browser:
-
-```bash
-# On macOS/Linux
-open coffe-shop-webpage/index.html
-
-# On Windows
-start coffe-shop-webpage/index.html
+```
+# Open the Data Analytics folder
+cd "Data Analytics (CMP330)"
 ```
 
-Or use the **Live Server** extension in VS Code for hot-reload development.
+- Open any `.r` file and run it directly in RStudio.
+- Open any `.rmd` file and click **Knit** to render it to HTML (the corresponding `.html` output is also included in the folder for quick viewing without RStudio).
+
+### 6. Run SQL Scripts
+
+Open **SQL Server Management Studio (SSMS)** or **Azure Data Studio**, connect to your local SQL Server instance, and open any `.sql` file from the `INTRODUCTION TO DATABASES/` folder to execute queries.
+
+### 7. View the Web / Client-Side Projects
+
+Open any `.html` file from the `Client-Side Development/` or `coffe-shop-webpage/` folder directly in your browser, or use the **Live Server** extension in VS Code for hot-reload development.
 
 ---
 
 ## 📐 Academic & Coding Standards
 
-All work in this repository aims to follow these standards:
-
-| Domain | Standard |
-|---|---|
-| Python | [PEP 8](https://peps.python.org/pep-0008/) — consistent naming, spacing, docstrings |
-| SQL | Capitalised keywords; meaningful table/column names; commented scripts |
-| HTML/CSS | Semantic HTML5; BEM-style class naming where applicable |
-| LaTeX | Structured documents with sections, references, and bibliography |
-| Git | Descriptive commit messages; feature branches for new work |
+| Domain    | Standard                                                                             |
+| --------- | --------------------------------------------------------------------------------------- |
+| Python     | [PEP 8](https://peps.python.org/pep-0008/) — consistent naming, spacing, docstrings    |
+| SQL        | Capitalised keywords; meaningful table/column names; commented scripts                 |
+| HTML/CSS   | Semantic HTML5; BEM-style class naming where applicable                                |
+| LaTeX      | Structured documents with sections, references, and bibliography                        |
+| Git        | Descriptive commit messages; feature branches for new work                             |
 
 ---
 
@@ -238,7 +271,7 @@ All work in this repository aims to follow these standards:
 
 Contributions are welcome, especially from fellow Ulster University students.
 
-```bash
+```
 # 1. Fork this repository on GitHub
 
 # 2. Clone your fork
@@ -261,38 +294,41 @@ git push origin feature/your-feature-name
 
 This repository follows a simplified [Conventional Commits](https://www.conventionalcommits.org/) standard:
 
-| Prefix | Use For |
-|---|---|
-| `feat:` | New file, script, or module content added |
-| `fix:` | Bug fixes or corrections |
-| `docs:` | README or documentation updates |
-| `refactor:` | Code restructuring without changing functionality |
-| `style:` | Formatting, spacing, naming changes only |
-| `chore:` | Maintenance tasks, dependency updates |
+| Prefix      | Use For                                            |
+| ----------- | --------------------------------------------------- |
+| `feat:`     | New file, script, or module content added           |
+| `fix:`      | Bug fixes or corrections                             |
+| `docs:`     | README or documentation updates                      |
+| `refactor:` | Code restructuring without changing functionality    |
+| `style:`    | Formatting, spacing, naming changes only              |
+| `chore:`    | Maintenance tasks, dependency updates                 |
 
 ---
 
 ## 📋 Changelog
 
-| Version | Date | Description |
-|---|---|---|
-| v1.0 | Initial | Repository created with base structure |
-| v1.x | Ongoing | Module content added across COM435, DB, Python, Web |
+| Version | Date    | Description                                                                          |
+| ------- | ------- | -------------------------------------------------------------------------------------- |
+| v1.0    | Initial | Repository created with base structure                                                |
+| v1.1    | Update  | Added COM398 Systems Security and COM410 Programming in Practice modules              |
+| v1.2    | Update  | Added CMP301 Computer Networking and Data Analytics (CMP330) modules                  |
+| v1.3    | Ongoing | Active work on Client-Side Development module                                        |
+| v1.4    | Update  | Data Analytics (CMP330) uses R/R Markdown/HTML; added PowerPoint slides to CMP301    |
 
 ---
 
 ## ❓ FAQ
 
-**Q: Can I reuse the code here in my own academic submission?**  
+**Q: Can I reuse the code here in my own academic submission?**
 A: No. Reusing submitted academic work may violate Ulster University's Academic Integrity Policy. You may use this repo as a **reference or learning resource** only.
 
-**Q: Why does cloning fail for the coffee shop submodule?**  
+**Q: Why does cloning fail for the coffee shop submodule?**
 A: Run `git clone --recurse-submodules ...` instead of a plain `git clone`. See the [Getting Started](#-getting-started) section.
 
-**Q: Which Python version is required?**  
+**Q: Which Python version is required?**
 A: Python **3.6 or higher** is recommended. Python 2 is not supported.
 
-**Q: How do I run `.ipynb` notebooks without Jupyter?**  
+**Q: How do I run `.ipynb` notebooks without Jupyter?**
 A: You can view them directly on GitHub, or use [Google Colab](https://colab.research.google.com/) by uploading the file — no local install needed.
 
 ---
@@ -311,18 +347,12 @@ This repository is intended for **academic, educational, and portfolio purposes 
 
 ## 📬 Contact
 
-| Platform | Link |
-|---|---|
-| GitHub Profile | [@rukonuzzamantopu](https://github.com/rukonuzzamantopu) |
-| Institution | [Ulster University](https://www.ulster.ac.uk) |
-| Repository Issues | [Open an Issue](https://github.com/rukonuzzamantopu/Ulster-University/issues) |
+| Platform          | Link                                                                          |
+| ------------------ | -------------------------------------------------------------------------------- |
+| GitHub Profile      | [@rukonuzzamantopu](https://github.com/rukonuzzamantopu)                        |
+| Institution         | [Ulster University](https://www.ulster.ac.uk)                                    |
+| Repository Issues   | [Open an Issue](https://github.com/rukonuzzamantopu/Ulster-University/issues)   |
 
 ---
 
-<div align="center">
-
-Made with dedication as part of the academic journey at **Ulster University**, Northern Ireland 🎓  
-
 *Organised · Version-Controlled · Collaborative*
-
-</div>
